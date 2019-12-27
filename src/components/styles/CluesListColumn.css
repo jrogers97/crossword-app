@@ -1,0 +1,16 @@
+.CluesListColumn-Container {
+	width: 100%;
+	margin-right: 10px;
+}
+
+.CluesListColumn-Label {
+	font-weight: bold;
+	padding: 18px 0 5px 0;
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+.CluesListColumn {
+	overflow-y: scroll;
+	max-height: 100%;
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+}

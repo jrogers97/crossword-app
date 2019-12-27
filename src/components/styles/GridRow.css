@@ -1,0 +1,21 @@
+.GridRow {
+	display: flex;
+	height: 6.666667%;
+	width: 100%;
+}
+
+.GridRow:last-child {
+	border-bottom: 1px solid #383838;
+	height: calc(6.666667% + 1px);
+}
+
+.GridCellContainer {
+	height: 100%;
+	width: 6.666667%;
+	border-top: 1px solid #383838;
+	border-left: 1px solid #383838;
+}
+
+.GridCellContainer:nth-child(15n) {
+	border-right: 1px solid #383838;
+}

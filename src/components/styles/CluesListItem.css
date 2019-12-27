@@ -1,0 +1,40 @@
+.CluesListItem {
+	/*padding: 6px 0;*/
+	font-size: 14px;
+	display: flex;
+	/*border-radius: 2px;*/
+	line-height: 1.5;
+}
+
+.CluesListItem:hover {
+	background-color: rgba(167, 216, 255, 0.25);
+	cursor: pointer;
+}
+
+.CluesListItem-Label {
+	font-weight: bold;
+	min-width: 25px;
+	text-align: right;
+	padding: 4px;
+}
+
+.CluesListItem-Text {
+	margin-left: 3px;
+	padding: 4px 8px 4px 4px;
+}
+
+.CluesListItem-SideTab {
+	min-width: 10px;
+}
+
+.italic {
+	font-style: italic;
+}
+
+.greyed {
+	color: 	grey;
+}
+
+.activeClueListItem, .altActiveClueSideTab {
+	background-color: #a7d8ff!important;
+}
