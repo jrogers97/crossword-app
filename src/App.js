@@ -34,19 +34,22 @@ class App extends Component {
 			ignoredDays: ["sunday"],
 			labels: [],
 			loading: true,
+			paused: false,
+			hasStarted: false,
 			shouldCheckFinishedGrid: true
 		}
 
-		this.handleCellClick      = this.handleCellClick.bind(this);
-		this.handleClueClick      = this.handleClueClick.bind(this);
-		this.handleKeyDown        = this.handleKeyDown.bind(this);
-		this.handleNewPuzzleClick = this.handleNewPuzzleClick.bind(this);
-		this.handleCheckClick     = this.handleCheckClick.bind(this);
-		this.handleRevealClick    = this.handleRevealClick.bind(this);
-		this.handleClearClick     = this.handleClearClick.bind(this);
-		this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
-		this.handleNotesClick     = this.handleNotesClick.bind(this);
-		this.isGreyedClue         = this.isGreyedClue.bind(this);
+		this.handleCellClick        = this.handleCellClick.bind(this);
+		this.handleClueClick        = this.handleClueClick.bind(this);
+		this.handleKeyDown          = this.handleKeyDown.bind(this);
+		this.handleNewPuzzleClick   = this.handleNewPuzzleClick.bind(this);
+		this.handleCheckClick       = this.handleCheckClick.bind(this);
+		this.handleRevealClick      = this.handleRevealClick.bind(this);
+		this.handleClearClick       = this.handleClearClick.bind(this);
+		this.handleCheckboxChange   = this.handleCheckboxChange.bind(this);
+		this.handleNotesClick       = this.handleNotesClick.bind(this);
+		this.handleModalButtonClick = this.handleModalButtonClick.bind(this);
+		this.isGreyedClue           = this.isGreyedClue.bind(this);
 	}
 
 	setupPuzzle() {
@@ -76,7 +79,8 @@ class App extends Component {
 						incorrectCells: [],
 						revealedCells: [],
 						noteCells: [],
-						loading: false
+						loading: false,
+						paused: false
 					});
 				} else {
 					console.log('incorrect size');
@@ -99,7 +103,7 @@ class App extends Component {
 	}
 
 	handleKeyDown(e) {
-		if (this.state.loading) {
+		if (this.state.loading || this.state.paused || !this.state.hasStarted) {
 			return;
 		}
 
@@ -127,9 +131,12 @@ class App extends Component {
 				// if we're in notes mode, add active cell to noted cells
 				// if we're not and active cell is noted, remove from noted cells
 				let newNoteCells = this.state.noteCells.slice();
-				if (this.state.notesMode && !this.isCellInGroup(this.state.noteCells, this.state.activeCell)) {
+				let shouldAddNote = this.state.notesMode && !this.isCellInGroup(this.state.noteCells, this.state.activeCell);
+				let shouldDeleteNote = !this.state.notesMode && this.isCellInGroup(this.state.noteCells, this.state.activeCell);
+
+				if (shouldAddNote) {
 					newNoteCells = [...newNoteCells, this.state.activeCell];
-				} else if (!this.state.notesMode && this.isCellInGroup(this.state.noteCells, this.state.activeCell)) {
+				} else if (shouldDeleteNote) {
 					newNoteCells = newNoteCells.filter(([cellRow, cellCol]) => {
 						return !(cellRow === this.state.activeCell[0] && cellCol === this.state.activeCell[1]);
 					});
@@ -414,6 +421,13 @@ class App extends Component {
 		}
 	}
 
+	handleModalButtonClick(e) {
+		this.setState({
+			loading: false,
+			hasStarted: true
+		});
+	}
+
 	moveToNextCell(isAcross, ignoreUnfinishedClues, wasEmptyCell) {
 		let currentCell = this.state.activeCell;
 		let foundNextCell = false;
@@ -622,18 +636,31 @@ class App extends Component {
      		</div>);
 
 		return (
-			<div className="App">
-				<div className="NavContainer">
-					<Nav 
-						handleNewPuzzleClick={this.handleNewPuzzleClick} 
-						handleCheckClick={this.handleCheckClick}
-						handleRevealClick={this.handleRevealClick}
-						handleClearClick={this.handleClearClick}
-						handleNotesClick={this.handleNotesClick}
-						onCheckboxChange={this.handleCheckboxChange} />
+			<div className="Container">
+				<div className={"App " + (this.state.paused || !this.state.hasStarted ? "blur" : "")}>
+					<div className="NavContainer">
+						<Nav 
+							handleNewPuzzleClick={this.handleNewPuzzleClick} 
+							handleCheckClick={this.handleCheckClick}
+							handleRevealClick={this.handleRevealClick}
+							handleClearClick={this.handleClearClick}
+							handleNotesClick={this.handleNotesClick}
+							onCheckboxChange={this.handleCheckboxChange} />
+					</div>
+					{body}
+			   </div> 
+
+			   <div className={"ModalOverlay " + (!this.state.paused && this.state.hasStarted ? "hidden" : "")}>
+					<div className="ModalContent">
+						<p className="ModalText"> 
+							{!this.state.hasStarted ? "Ready to start solving?" : "Your game is paused"}
+						</p>
+						<button className="ModalButton" onClick={this.handleModalButtonClick}>
+							{!this.state.hasStarted ? "OK" : "RESUME"}
+						</button>
+					</div>
 				</div>
-				{body}
-		   </div> 
+		   </div>
 		);
 	}
 }

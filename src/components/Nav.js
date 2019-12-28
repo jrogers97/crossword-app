@@ -10,7 +10,6 @@ class Nav extends Component {
 	}
 
 	handleNavButtonClick(e) {
-		console.log(e.target);
 		// toggle dropdown of clicked button, hide all other dropdowns
 		if (e.target.classList.value.includes("Days")) {
 			this.daysDropdown.classList.toggle("hidden");
