@@ -1,57 +1,56 @@
 // given a cell and isAcross, find all cells in relevant clue
 export const findActiveClueCells = (activeCell, isAcross, grid, rowLength) => {
-	// console.log(grid, activeCell);
 	let activeClueCells = [];
 
 	// find first cell in clue, then continue adding until the end of the clue
-	let [firstActiveClueRow, firstActiveClueCol] = activeCell.slice();
+	let firstActiveClueCell = activeCell;
 
 	if (isAcross) {
 		// first clue cell is either column 0 or when the previous column is blacked out
-		while (firstActiveClueCol !== 0 && grid[firstActiveClueRow][firstActiveClueCol - 1] !== false) {
-			firstActiveClueCol -= 1;
+		while (firstActiveClueCell % rowLength !== 0 && grid[firstActiveClueCell - 1] !== false) {
+			firstActiveClueCell -= 1;
 		}
 	} else {
 		// first clue cell is either row 0 or when the previous row is blacked out
-		while (firstActiveClueRow !== 0 && grid[firstActiveClueRow - 1][firstActiveClueCol] !== false) {
-			firstActiveClueRow -= 1;
+		while (firstActiveClueCell >= rowLength && grid[firstActiveClueCell - rowLength] !== false) {
+			firstActiveClueCell -= rowLength;
 		}
 	}
 
-	activeClueCells.push([firstActiveClueRow, firstActiveClueCol]);
+	activeClueCells.push(firstActiveClueCell);
 
-	let [nextClueRowToAdd, nextClueColToAdd] = [firstActiveClueRow, firstActiveClueCol].slice();
+	let nextClueCellToAdd = firstActiveClueCell;
 	if (isAcross) {
-		while (nextClueColToAdd !== rowLength - 1 && grid[nextClueRowToAdd][nextClueColToAdd + 1] !== false) {
-			nextClueColToAdd += 1;
-			activeClueCells.push([nextClueRowToAdd, nextClueColToAdd].slice());
+		while (nextClueCellToAdd % rowLength !== rowLength - 1 && grid[nextClueCellToAdd + 1] !== false) {
+			nextClueCellToAdd += 1;
+			activeClueCells.push(nextClueCellToAdd);
 		}
 	} else {
-		while (nextClueRowToAdd !== rowLength - 1 && grid[nextClueRowToAdd + 1][nextClueColToAdd] !== false) {
-			nextClueRowToAdd += 1;
-			activeClueCells.push([nextClueRowToAdd, nextClueColToAdd].slice());
+		while (Math.floor(nextClueCellToAdd / rowLength) < (rowLength - 1) && grid[nextClueCellToAdd + rowLength] !== false) {
+			nextClueCellToAdd += rowLength;
+			activeClueCells.push(nextClueCellToAdd);
 		}
 	}
 
 	return activeClueCells;
 }
 
-// given a clue, return active cell in that clue, and rest of clue cells
+// given a clue, return active cell in that clue, and rest of clue cells, and if the clue is across
 export const getActiveCellsFromClue = (clueObj, grid, rowLength) => {
-	let clueNum = Object.keys(clueObj)[0];
-	let clue = clueObj[clueNum];
-	let isAcross = clueNum[clueNum.length - 1] === "A";
-	let activeClueCells = findActiveClueCells(clue.startCell, isAcross, grid, rowLength);
+	const clueNum = Object.keys(clueObj)[0];
+	const clue = clueObj[clueNum];
+	const isAcross = clueNum[clueNum.length - 1] === "A";
+	const activeClueCells = findActiveClueCells(clue.startCell, isAcross, grid, rowLength);
 
 	let i = 0;
-	let activeCell = activeClueCells[i].slice();
-	let [activeRow, activeCol] = activeCell;
-	while (grid[activeRow][activeCol] !== null && i < activeClueCells.length - 1) {
+	let activeCell = activeClueCells[i];
+	while (grid[activeCell] !== null && i < activeClueCells.length - 1) {
 		i++;
-		activeCell = activeClueCells[i].slice();
+		activeCell = activeClueCells[i];
 	}
 
-	if (grid[activeRow][activeCol] !== null) {
+	// if every cell is filled, make first one active
+	if (grid[activeCell] !== null) {
 		activeCell = activeClueCells[0];
 	}
 
@@ -59,7 +58,7 @@ export const getActiveCellsFromClue = (clueObj, grid, rowLength) => {
 }
 
 export const findFirstActiveClues = (isAcross, clues) => {
-	let clueNum = `1${isAcross ? "A" : "D"}`;
+	const clueNum = `1${isAcross ? "A" : "D"}`;
 	if (clues[clueNum]) {
 		let ret = {};
 		ret[clueNum] = clues[clueNum];
@@ -71,24 +70,18 @@ export const findFirstActiveClues = (isAcross, clues) => {
 
 // returns [first active cell, first active clue cells]
 export const findFirstActiveCells = (grid, isAcross, rowLength) => {
-	let firstCell = [0,0];
-	while (grid[firstCell[0]][firstCell[1]] === false) {
-		let endOfRow = firstCell[1] === rowLength - 1;
-		if (endOfRow) {
-			firstCell = [firstCell[0] + 1, 0];
-		} else {
-			firstCell = [firstCell[0], firstCell[1] + 1];
-		}
+	let firstCell = 0;
+	while (grid[firstCell] === false) {
+		firstCell += 1;
 	}
 
-	return [firstCell, findActiveClueCells(firstCell, isAcross, grid, grid, rowLength)];
+	return [firstCell, findActiveClueCells(firstCell, isAcross, grid, rowLength)];
 }
 
-// [row, col] is first cell of clue
-export const getActiveClueFromCell = ([row, col], clues, isAcross) => {
-	let activeClueNum = Object.keys(clues).filter(clueNum => 
-		   clues[clueNum].startCell[0] === row 
-		&& clues[clueNum].startCell[1] === col
+// cell must be first of the clue
+export const getActiveClueFromCell = (cell, clues, isAcross) => {
+	const activeClueNum = Object.keys(clues).filter(clueNum => 
+		   clues[clueNum].startCell === cell
 		&& clueNum[clueNum.length - 1] === (isAcross ? "A" : "D"));
 
 	let newActiveClue = {}
@@ -98,55 +91,94 @@ export const getActiveClueFromCell = ([row, col], clues, isAcross) => {
 } 
 
 export const getNextDownClueStartCell = (currentClue, clues) => {
-	let currentClueLabel = Object.keys(currentClue)[0];
-	let clueLabels = Object.keys(clues).filter(clue => clue.includes("D"));
-	let clueLabelIdx = clueLabels.indexOf(currentClueLabel);
+	const currentClueLabel = Object.keys(currentClue)[0];
+	const clueLabels = Object.keys(clues).filter(clue => clue.includes("D"));
+	const clueLabelIdx = clueLabels.indexOf(currentClueLabel);
 	// if we're on last clue, return top left cell, otherwise return start cell of next down clue
 	if (clueLabelIdx < clueLabels.length - 1) {
 		return clues[clueLabels[clueLabelIdx + 1]].startCell;
 	} else {
-		return [0,0];
+		return 0;
 	}
 }
 
 export const getPreviousDownClueEndCell = (currentClue, clues, grid, rowLength) => {
-	let currentClueLabel = Object.keys(currentClue)[0];
-	let clueLabels = Object.keys(clues).filter(clue => clue.includes("D"));
-	let clueLabelIdx = clueLabels.indexOf(currentClueLabel);
+	const currentClueLabel = Object.keys(currentClue)[0];
+	const clueLabels = Object.keys(clues).filter(clue => clue.includes("D"));
+	const clueLabelIdx = clueLabels.indexOf(currentClueLabel);
 
 	if (clueLabelIdx === 0) {
-		return [0,0];
+		return 0;
 	} else {
-		let previousClueStartCell = clues[clueLabels[clueLabelIdx - 1]].startCell;
-		let previousClueCells = findActiveClueCells(previousClueStartCell, false, grid, rowLength);
+		const previousClueStartCell = clues[clueLabels[clueLabelIdx - 1]].startCell;
+		const previousClueCells = findActiveClueCells(previousClueStartCell, false, grid, rowLength);
 		return previousClueCells[previousClueCells.length - 1];
 	}
 }
 
-export const isGridComplete = (grid) => {
-	// bool list representing if each row is finished
-	let rowsFinished = grid.map(row => {
-		return !row.some(char => char === null);
+// if cell was added, check if we should make clue greyed
+// if cell was deleted, check if we should un-grey clue
+export const getGreyedClues = (newGrid, clues, greyedClues, activeCell, cellAdded, isAcross, rowLength) => {
+	const clueCells = findActiveClueCells(activeCell, isAcross, newGrid, rowLength);
+	const activeClue = getActiveClueFromCell(clueCells[0], clues, isAcross);
+	const activeClueLabel = Object.keys(activeClue)[0];
+
+	const altDirClueCells = findActiveClueCells(activeCell, !isAcross, newGrid, rowLength);
+	const altDirActiveClue = getActiveClueFromCell(altDirClueCells[0], clues, !isAcross);
+	const altDirActiveClueLabel = Object.keys(altDirActiveClue)[0];
+
+	let greyedCluesCopy = greyedClues.slice();
+
+	const clueInfo = [[clueCells, activeClueLabel], [altDirClueCells, altDirActiveClueLabel]];
+	clueInfo.forEach(([cells, label]) => {
+		let shouldGreyClue = !cells.some(cell => newGrid[cell] === null);
+		let clueIdx = greyedCluesCopy.indexOf(label);
+		if (cellAdded && shouldGreyClue && clueIdx < 0) {
+			greyedCluesCopy = [...greyedCluesCopy, label];
+		} else if (!cellAdded && clueIdx >= 0) {
+			greyedCluesCopy.splice(clueIdx, 1);
+		}
 	});
 
-	return rowsFinished.every(row => row);
+	return greyedCluesCopy;
+}
+
+export const isGridComplete = (grid) => {
+	return !grid.some(char => char === null);
 }
 
 export const findAllCells = (grid, rowLength) => {
-	let flatGrid = [];
-	grid.forEach((row, idx) => {
-		flatGrid = [...flatGrid, ...row];
-	});
+	return grid
+		.map((cell, idx) => (cell === false) ? false : idx)
+	    .filter(cell => cell !== false);
+}
 
-	let cellPosGrid = flatGrid
-		.map((cell, idx) => {
-			if (cell === false) {
-				return false;
-			} else {
-				return [Math.floor(idx / rowLength), idx % rowLength];
-			}
-		})
-		.filter(cell => cell !== false);
+// returns [starting cell, clue number label]
+export const makeLabels = (clues) => {
+	return Object.keys(clues).map(clueNum => [clues[clueNum].startCell, clueNum.replace(/\D+/g, '')]);
+}
 
-	return cellPosGrid;
+// for state arrays like correct, revealed, noted cells
+export const isCellInGroup = (cellGroup, cellToFind) => {
+	return !!cellGroup.find(cell => cellToFind === cell);
+}
+
+// return false if any squares have more than one letter
+export const isRebus = (grid) => {
+	return grid.some(square => square.length > 1);
+}
+
+export const formatTime = (seconds) => {
+	let substringStart;
+	if (seconds < 600) {
+		substringStart = 15;
+	} else if (seconds < 3600) {
+		substringStart = 14;
+	} else if (seconds < 36000) {
+		substringStart = 12;
+	} else {
+		substringStart = 11;
+	}
+
+	return new Date(seconds * 1000).toISOString().substr(substringStart, 19 - substringStart);
 }

@@ -1,0 +1,23 @@
+.Timer {
+	display: flex;
+	align-items: center;
+	margin-right: 10px;
+}
+
+.Timer-Pause {
+	border: none;
+	background-color: transparent;
+	height: 16px;
+	width: 16px;
+	margin-left: 5px;
+}
+
+.Timer-Pause:hover {
+	cursor: pointer;
+}
+
+.Timer-PauseIcon {
+	height: 100%;
+	width: 100%;
+	fill: #DCEFFE;
+}

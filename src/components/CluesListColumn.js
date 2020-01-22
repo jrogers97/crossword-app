@@ -21,17 +21,21 @@ class CluesListColumn extends Component {
 
 	componentDidUpdate() {
 		// get top offset of active clue list item, scroll to it
-		let activeListItem = this.listItems.find(item => item.id === Object.keys(this.props.activeClue)[0]);
-		let altActiveListItem = this.listItems.find(item => item.id === Object.keys(this.props.altDirectionActiveClue)[0]);
+		const activeListItem = this.listItems.find(item => item.id === Object.keys(this.props.activeClue)[0]);
+		const altActiveListItem = this.listItems.find(item => item.id === Object.keys(this.props.altDirectionActiveClue)[0]);
 
-		let listItemOffset = activeListItem ? activeListItem.offsetTop - this.listColumnOffset : null;
-		let altListItemOffset = altActiveListItem ? altActiveListItem.offsetTop - this.listColumnOffset : null;
+		const listItemOffset = activeListItem ? activeListItem.offsetTop - this.listColumnOffset : null;
+		const altListItemOffset = altActiveListItem ? altActiveListItem.offsetTop - this.listColumnOffset : null;
 
 		if (listItemOffset !== null) {
 			this.listColumnNode.scrollTo({top: listItemOffset, behavior: 'smooth'});
 		} else if (altListItemOffset !== null) {
 			this.listColumnNode.scrollTo({top: altListItemOffset, behavior: 'smooth'});
 		}
+	}
+
+	isGreyedClue(clueNum) {
+		return this.props.greyedClues.indexOf(clueNum) >= 0;
 	}
 
 	isActiveClue(clueNum, activeClue) {
@@ -49,7 +53,7 @@ class CluesListColumn extends Component {
 							clueNum={clueNum} 
 							clueText={this.props.clues[clueNum].clue}
 							isActive={this.isActiveClue(clueNum, this.props.activeClue)}
-							isGreyed={this.props.isGreyed([clueNum, this.props.clues[clueNum]])}
+							isGreyed={this.isGreyedClue(clueNum)}
 							isAltDirectionActive={this.isActiveClue(clueNum, this.props.altDirectionActiveClue)}
 							handleClueClick={this.props.handleClueClick} />
 					)}

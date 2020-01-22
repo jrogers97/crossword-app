@@ -3,9 +3,9 @@ import './styles/Grid.css';
 
 import GridRow from './GridRow';
 
-const findRowsCells = (cells, row) => cells.filter(cell => cell[0] === row);
+const findRowsCells = (cells, row, rowLength) => cells.filter(cell => Math.floor(cell / rowLength) === row);
 
-const findGridRowLabels = (labels, row) => labels.filter(label => label[0][0] === row);
+const findGridRowLabels = (labels, row, rowLength) => labels.filter(label => Math.floor(label[0] / rowLength) === row);
 
 const Grid = ({
 	grid, 
@@ -25,14 +25,15 @@ const Grid = ({
 				<GridRow 
 					key={i} 
 					rowNumber={i}
-					gridRow={grid[i]}
-					gridRowLabels={findGridRowLabels(labels, i)}
+					gridRow={grid.slice(i * rowLength, i * rowLength + rowLength)}
+					gridRowLabels={findGridRowLabels(labels, i, rowLength)}
+					rowLength={rowLength}
 					activeCell={activeCell}
-					activeClueCells={findRowsCells(activeClueCells, i)}
-					correctCells={findRowsCells(correctCells, i)}
-					incorrectCells={findRowsCells(incorrectCells, i)}
-					revealedCells={findRowsCells(revealedCells, i)}
-					noteCells={findRowsCells(noteCells, i)}
+					activeClueCells={findRowsCells(activeClueCells, i, rowLength)}
+					correctCells={findRowsCells(correctCells, i, rowLength)}
+					incorrectCells={findRowsCells(incorrectCells, i, rowLength)}
+					revealedCells={findRowsCells(revealedCells, i, rowLength)}
+					noteCells={findRowsCells(noteCells, i, rowLength)}
 					handleCellClick={handleCellClick} />
 			)}
 		</div>

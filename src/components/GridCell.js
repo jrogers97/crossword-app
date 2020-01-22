@@ -14,7 +14,7 @@ const getRedMarkerClass = (incorrect, revealed) => {
 const getTextCssClass = (correct, note) => "GridCell-text " + (correct ? "correct " : " ") + (note ? "note" : "");
 
 const GridCell = ({ active, activeClue, correct, incorrect, revealed, note, char, label }) => {
-	let extraClassName = (active ? "activeCell " : "") + (activeClue ? "activeClue " : "") + (char === false ? "disabled " : "");
+	const extraClassName = (active ? "activeCell " : "") + (activeClue ? "activeClue " : "") + (char === false ? "disabled " : "");
 	return (
 		<div className={"GridCell " + extraClassName}>
 			<span className={getRedMarkerClass(incorrect, revealed)}></span>

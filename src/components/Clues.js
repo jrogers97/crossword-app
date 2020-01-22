@@ -19,24 +19,33 @@ const separateAcrossDownClues = (clues) => {
 	return separatedClues;
 }
 
-const Clues = ({clues, grid, activeCell, activeClue, altDirectionActiveClue, handleClueClick, isGreyed}) => {
+const separateAcrossDownGreyedClues = (greyedClues) => {
+	let separatedClues = [];
+	["a", "d"].forEach(clueType => {
+		separatedClues.push(greyedClues.filter(clue => clue.toLowerCase().includes(clueType)));
+	});
+
+	return separatedClues;
+}
+
+const Clues = ({clues, grid, activeClue, altDirectionActiveClue, greyedClues, handleClueClick}) => {
 	return (
 		<div className="CluesContainer">
 			<CluesListColumn 
 				clues={separateAcrossDownClues(clues)[0]} 
+				greyedClues={separateAcrossDownGreyedClues(greyedClues)[0]}
 				grid={grid}
 				activeClue={activeClue}
 				altDirectionActiveClue={altDirectionActiveClue}
 				handleClueClick={handleClueClick}
-				isGreyed={isGreyed}
-				label="Across"/>
+				label="Across" />
 			<CluesListColumn 
 				clues={separateAcrossDownClues(clues)[1]} 
+				greyedClues={separateAcrossDownGreyedClues(greyedClues)[1]}
 				grid={grid}
 				activeClue={activeClue}
 				altDirectionActiveClue={altDirectionActiveClue}
 				handleClueClick={handleClueClick}
-				isGreyed={isGreyed}
 				label="Down" />
 		</div>
 	);

@@ -5,12 +5,12 @@ const getExtraBannerTextClass = text => {
 	return text.includes("*") ? "italic" : "";
 }
 
-const ClueBanner = ({label, clue}) => {
+const ClueBanner = ({label, clue = {clue: ""}}) => {
 	return (
 		<div className="ClueBanner">
 			<span className="ClueBanner-label"> {label} </span>
 			<span className={"ClueBanner-text " + getExtraBannerTextClass(clue.clue)}> 
-				{clue.clue.replace("&amp;", "&")} 
+				{clue.clue.replace("&amp;", "&").replace("&reg;", "®")} 
 			</span>
 		</div>
 	);

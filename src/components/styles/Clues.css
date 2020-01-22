@@ -1,6 +1,7 @@
 .CluesContainer {
-	min-height: 480px;
-	max-height: 85vh;
+	/* min-height: 480px; */
+	/* max-height: 85vh; */
+	height: 100vh;
 	display: flex;
 	margin-right: 5px;
 	width: 550px;
