@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Timer from './Timer';
 import './styles/Nav.css';
-import notesIcon from '../pencil.svg';
+import notesIcon from '../../pencil.svg';
 
 class Nav extends Component {
 	constructor(props) {
@@ -95,6 +95,7 @@ class Nav extends Component {
 		const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 		return (
 			<div className="NavBar">
+				<button	className="NavBar-Menu">Menu</button>
 				<button className="NavBar-NewPuzzle" onClick={this.props.handleNewPuzzleClick}> New Puzzle </button>
 				<button className="NavBar-Days" onClick={this.handleNavButtonClick}> Difficulty </button>
 				

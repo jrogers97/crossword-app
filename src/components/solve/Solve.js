@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import smoothscroll from 'smoothscroll-polyfill';
 import ClipLoader from 'react-spinners/ClipLoader';
-import './App.css';
-import { fetchRandomData, makeFinishedGrid, makeClues } from './util/data';
-import * as utils from './util/utilities';
+import './styles/Solve.css';
+import { fetchRandomData, makeFinishedGrid, makeClues } from '../../util/data';
+import * as utils from '../../util/utilities';
 
-import Nav from './components/Nav';
-import Grid from './components/Grid';
-import Clues from './components/Clues';
-import ClueBanner from './components/ClueBanner';
-import PuzzleHeader from './components/PuzzleHeader';
-import Modal from './components/Modal';
+import Nav from './Nav';
+import Grid from './Grid';
+import Clues from './Clues';
+import ClueBanner from './ClueBanner';
+import PuzzleHeader from './PuzzleHeader';
+import Modal from './Modal';
 
 
-class App extends Component {
+class Solve extends Component {
 	constructor(props) {
 		super(props);
 
@@ -63,7 +63,7 @@ class App extends Component {
 	componentDidMount() {
 		var self = this;
 		setTimeout(function() {
-			const storedState = localStorage.getItem('state');
+			const storedState = localStorage.getItem('solveState');
 			if (storedState) {
 				console.log(JSON.parse(storedState));
 				self.setState(JSON.parse(storedState));
@@ -130,7 +130,7 @@ class App extends Component {
 
 	// save state to local storage
 	saveState() {
-		localStorage.setItem('state', JSON.stringify(this.state));
+		localStorage.setItem('solveState', JSON.stringify(this.state));
 	}
 
 	handleKeyDown(e) {
@@ -651,8 +651,8 @@ class App extends Component {
      		</div>);
 
 		return (
-			<div className="AppContainer">
-				<div className={"App " + (this.shouldBlurBackground() ? "blur" : "")}>
+			<div className="SolveContainer">
+				<div className={"Solve " + (this.shouldBlurBackground() ? "blur" : "")}>
 					<div className="NavContainer">
 						<Nav 
 							handleTimerPause={this.handleTimerPause}
@@ -690,4 +690,4 @@ class App extends Component {
 	}
 }
 
-export default App;
+export default Solve;

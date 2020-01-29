@@ -1,5 +1,5 @@
 import React from 'react';
-import {formatTime} from '../util/utilities';
+import {formatTime} from '../../util/utilities';
 import './styles/Modal.css';
 
 const getModalText = (hasStarted, paused, timerValue, finished, correct) => {

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {formatTime} from '../util/utilities';
-import pauseIcon from '../pause.svg';
+import {formatTime} from '../../util/utilities';
+import pauseIcon from '../../pause.svg';
 import './styles/Timer.css';
 
 class Timer extends Component {
@@ -34,7 +34,7 @@ class Timer extends Component {
         let hasStartedFlag;
 		setInterval(() => {
 			if (this.props.finished && this.props.correct) {
-				finishedAndCorrectFlag = true;
+                finishedAndCorrectFlag = true;
             }
             
             if (this.props.hasStarted) {
