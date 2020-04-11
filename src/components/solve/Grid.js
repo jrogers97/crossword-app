@@ -28,12 +28,13 @@ const Grid = ({
 					gridRow={grid.slice(i * rowLength, i * rowLength + rowLength)}
 					gridRowLabels={findGridRowLabels(labels, i, rowLength)}
 					rowLength={rowLength}
+					isSunday={rowLength === 21}
 					activeCell={activeCell}
 					activeClueCells={findRowsCells(activeClueCells, i, rowLength)}
-					correctCells={findRowsCells(correctCells, i, rowLength)}
-					incorrectCells={findRowsCells(incorrectCells, i, rowLength)}
-					revealedCells={findRowsCells(revealedCells, i, rowLength)}
-					noteCells={findRowsCells(noteCells, i, rowLength)}
+					correctCells={correctCells ? findRowsCells(correctCells, i, rowLength) :  []}
+					incorrectCells={incorrectCells ? findRowsCells(incorrectCells, i, rowLength) : []}
+					revealedCells={revealedCells ? findRowsCells(revealedCells, i, rowLength) : []}
+					noteCells={noteCells ? findRowsCells(noteCells, i, rowLength) : []}
 					handleCellClick={handleCellClick} />
 			)}
 		</div>

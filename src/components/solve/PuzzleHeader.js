@@ -6,28 +6,30 @@ const makePuzzleTitle = (date) => {
 		return "";
 	}
 
-	let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-	let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-	let [month, day, year] = date.split("/");
-	let dateObj = new Date(year, month - 1, day);
+	const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	const [month, day, year] = date.split("/");
+	const dateObj = new Date(year, month - 1, day);
 
-	let dayStr = days[dateObj.getDay()];
-	let dateStr = dateObj.getDate().toString();
-	let monthStr = months[dateObj.getMonth()];
-	let yearStr = dateObj.getFullYear().toString();
+	const dayStr = days[dateObj.getDay()];
+	const dateStr = dateObj.getDate().toString();
+	const monthStr = months[dateObj.getMonth()];
+	const yearStr = dateObj.getFullYear().toString();
 
 	return [dayStr, `${monthStr} ${dateStr}, ${yearStr}`]
 }
 
 const PuzzleHeader = ({date, author}) => {
-	let [day, formattedDate] = makePuzzleTitle(date);
+	const [day, formattedDate] = makePuzzleTitle(date);
 
 	return (
-		<p className="PuzzleHeader"> 
-			<span className="PuzzleHeader-Day">{ day }</span>
-			<span className="PuzzleHeader-Date">{ formattedDate }</span>
+		<div className="PuzzleHeader"> 
+			<div className="PuzzleHeader-DateWrapper">
+				<span className="PuzzleHeader-Day">{ day }</span>
+				<span className="PuzzleHeader-Date">{ formattedDate }</span>
+			</div>
 			<span className="PuzzleHeader-Author">{ "by " + author }</span>
-		</p>
+		</div>
 	);
 }
 

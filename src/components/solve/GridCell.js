@@ -11,15 +11,20 @@ const getRedMarkerClass = (incorrect, revealed) => {
 	}
 }
 
-const getTextCssClass = (correct, note) => "GridCell-text " + (correct ? "correct " : " ") + (note ? "note" : "");
+const getTextCssClass = (correct, note, isSunday) => "GridCell-text "
+	+ (correct ? "correct " : " ") 
+	+ (note ? "note " : "")
+	+ (isSunday ? "text-sunday " : "");
 
-const GridCell = ({ active, activeClue, correct, incorrect, revealed, note, char, label }) => {
-	const extraClassName = (active ? "activeCell " : "") + (activeClue ? "activeClue " : "") + (char === false ? "disabled " : "");
+const GridCell = ({ active, activeClue, correct, incorrect, revealed, note, char, label, isSunday }) => {
+	const extraClassName = (active ? "activeCell " : "") 
+		+ (activeClue ? "activeClue " : "") 
+		+ (char === false ? "disabled " : "");
 	return (
 		<div className={"GridCell " + extraClassName}>
 			<span className={getRedMarkerClass(incorrect, revealed)}></span>
-			<span className="GridCell-label"> { label } </span>
-			<span className={getTextCssClass(correct, note)}> { char ? char.toUpperCase() : "" } </span>
+			<span className={"GridCell-label " + (isSunday ? "label-sunday" : "")}> { label } </span>
+			<span className={getTextCssClass(correct, note, isSunday)}> { char ? char.toUpperCase() : "" } </span>
 		</div>
 	);
 }

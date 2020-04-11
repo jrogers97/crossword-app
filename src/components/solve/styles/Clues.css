@@ -1,8 +1,15 @@
 .CluesContainer {
-	/* min-height: 480px; */
+	min-height: 540px;
 	/* max-height: 85vh; */
 	height: 100vh;
 	display: flex;
 	margin-right: 5px;
-	width: 550px;
+	max-width: 600px;
+}
+
+@media (max-width: 920px) {
+	.CluesContainer {
+		flex-direction: column;
+		max-width: 480px;
+	}
 }

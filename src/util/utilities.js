@@ -143,11 +143,9 @@ export const getGreyedClues = (newGrid, clues, greyedClues, activeCell, cellAdde
 	return greyedCluesCopy;
 }
 
-export const isGridComplete = (grid) => {
-	return !grid.some(char => char === null);
-}
+export const isGridComplete = (grid) => !grid.some(char => char === null);
 
-export const findAllCells = (grid, rowLength) => {
+export const findAllCells = (grid) => {
 	return grid
 		.map((cell, idx) => (cell === false) ? false : idx)
 	    .filter(cell => cell !== false);
@@ -159,14 +157,10 @@ export const makeLabels = (clues) => {
 }
 
 // for state arrays like correct, revealed, noted cells
-export const isCellInGroup = (cellGroup, cellToFind) => {
-	return !!cellGroup.find(cell => cellToFind === cell);
-}
+export const isCellInGroup = (cellGroup, cellToFind) => !!cellGroup.find(cell => cellToFind === cell);
 
 // return false if any squares have more than one letter
-export const isRebus = (grid) => {
-	return grid.some(square => square.length > 1);
-}
+export const isRebus = (grid) => grid.some(square => square.length > 1);
 
 export const formatTime = (seconds) => {
 	let substringStart;

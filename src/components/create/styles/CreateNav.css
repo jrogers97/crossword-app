@@ -1,0 +1,23 @@
+.NavBar-Blank {
+	border: none;
+	height: 44px;
+	padding: 1px 13px;
+    background-color: transparent;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: 30px;
+}
+
+.NavBar-BlankIcon {
+	height: 20px;
+	width: 20px;
+	vertical-align: middle;
+}
+
+.active-blank {
+    background-color: #4F85E5!important;
+}
+
+.active-blank .NavBar-BlankIcon{
+    filter: invert(1);
+}

@@ -28,20 +28,22 @@ const separateAcrossDownGreyedClues = (greyedClues) => {
 	return separatedClues;
 }
 
-const Clues = ({clues, grid, activeClue, altDirectionActiveClue, greyedClues, handleClueClick}) => {
+const Clues = ({clues, grid, activeClue, altDirectionActiveClue, greyedClues, handleClueClick, mode}) => {
 	return (
 		<div className="CluesContainer">
 			<CluesListColumn 
+				mode={mode}
 				clues={separateAcrossDownClues(clues)[0]} 
-				greyedClues={separateAcrossDownGreyedClues(greyedClues)[0]}
+				greyedClues={greyedClues ? separateAcrossDownGreyedClues(greyedClues)[0] : []}
 				grid={grid}
 				activeClue={activeClue}
 				altDirectionActiveClue={altDirectionActiveClue}
 				handleClueClick={handleClueClick}
 				label="Across" />
 			<CluesListColumn 
+				mode={mode}
 				clues={separateAcrossDownClues(clues)[1]} 
-				greyedClues={separateAcrossDownGreyedClues(greyedClues)[1]}
+				greyedClues={greyedClues ? separateAcrossDownGreyedClues(greyedClues)[1] : []}
 				grid={grid}
 				activeClue={activeClue}
 				altDirectionActiveClue={altDirectionActiveClue}

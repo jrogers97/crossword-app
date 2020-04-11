@@ -50,6 +50,7 @@ class CluesListColumn extends Component {
 					{Object.keys(this.props.clues).map(clueNum => 
 						<CluesListItem 
 							key={clueNum} 
+							mode={this.props.mode}
 							clueNum={clueNum} 
 							clueText={this.props.clues[clueNum].clue}
 							isActive={this.isActiveClue(clueNum, this.props.activeClue)}

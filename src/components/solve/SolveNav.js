@@ -1,9 +1,10 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import Timer from './Timer';
-import './styles/Nav.css';
-import notesIcon from '../../pencil.svg';
+import './styles/SolveNav.css';
+import notesIcon from '../../icon/pencil.svg';
+// import menuIcon from '../../icon/menu.svg';
 
-class Nav extends Component {
+class SolveNav extends Component {
 	constructor(props) {
 		super(props);
 
@@ -92,12 +93,18 @@ class Nav extends Component {
 	}
 
 	render() {
-		const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+		const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 		return (
-			<div className="NavBar">
-				<button	className="NavBar-Menu">Menu</button>
-				<button className="NavBar-NewPuzzle" onClick={this.props.handleNewPuzzleClick}> New Puzzle </button>
-				<button className="NavBar-Days" onClick={this.handleNavButtonClick}> Difficulty </button>
+			<Fragment>
+				{/* <button	className="NavBar-Menu" onClick={this.props.toggleSidebarOpen}>
+					<img src={menuIcon} className="NavBar-MenuIcon" alt="Menu"/>
+				</button> */}
+				<button className="NavBar-NewPuzzle" onClick={this.props.handleNewPuzzleClick}> 
+					New Puzzle 
+				</button>
+				<button className="NavBar-Days" onClick={this.handleNavButtonClick}> 
+					Difficulty 
+				</button>
 				
 				<div className="NavBar-RightButtons">
 					<Timer 
@@ -149,9 +156,9 @@ class Nav extends Component {
 					<button className="NavBar-CheckDropdownItem" onClick={() => this.props.handleCheckClick(1)}> Clue </button>
 					<button className="NavBar-CheckDropdownItem" onClick={() => this.props.handleCheckClick(2)}> Puzzle </button>
 				</div>
-			</div>
+			</Fragment>
 		);
 	}
 }
 
-export default Nav;
+export default SolveNav;

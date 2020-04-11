@@ -21,6 +21,7 @@
 .CluesListItem-Text {
 	margin-left: 3px;
 	padding: 4px 8px 4px 4px;
+	width: 100%;
 }
 
 .CluesListItem-SideTab {
@@ -37,4 +38,60 @@
 
 .activeClueListItem, .altActiveClueSideTab {
 	background-color: #a7d8ff!important;
+}
+
+.CluesListItem-Input {
+	background-color: transparent;
+	border: none;
+	font-size: 14px;
+	height: 100%;
+	width: 100%;
+	display: block;
+	resize: none;
+}
+
+.CluesListItem-Input:focus {
+	outline: none;
+}
+
+/* hide placeholder by default */
+.CluesListItem-Input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	opacity: 0;
+}
+.CluesListItem-Input::-moz-placeholder { /* Firefox 19+ */
+	opacity: 0;
+}
+.CluesListItem-Input:-ms-input-placeholder { /* IE 10+ */
+	opacity: 0;
+}
+.CluesListItem-Input:-moz-placeholder { /* Firefox 18- */
+	opacity: 0;
+}
+
+/* show placeholder on hover */
+.CluesListItem-Input:hover::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	opacity: 1;
+}
+.CluesListItem-Input:hover::-moz-placeholder { /* Firefox 19+ */
+	opacity: 1;
+}
+.CluesListItem-Input:hover:-ms-input-placeholder { /* IE 10+ */
+	opacity: 1;
+}
+.CluesListItem-Input:hover:-moz-placeholder { /* Firefox 18- */
+	opacity: 1;
+}
+
+/* show placeholder for active clue */
+.activeClueListItem .CluesListItem-Input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	opacity: 1!important;
+}
+.activeClueListItem .CluesListItem-Input::-moz-placeholder { /* Firefox 19+ */
+	opacity: 1;
+}
+.activeClueListItem .CluesListItem-Input:-ms-input-placeholder { /* IE 10+ */
+	opacity: 1;
+}
+.activeClueListItem .CluesListItem-Input:-moz-placeholder { /* Firefox 18- */
+	opacity: 1;
 }

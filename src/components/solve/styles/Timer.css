@@ -21,3 +21,9 @@
 	width: 100%;
 	fill: #DCEFFE;
 }
+
+@media(max-width: 700px) {
+	.Timer {
+		margin-right: 0;
+	}
+}

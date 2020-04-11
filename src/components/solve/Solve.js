@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import smoothscroll from 'smoothscroll-polyfill';
 import ClipLoader from 'react-spinners/ClipLoader';
 import './styles/Solve.css';
 import { fetchRandomData, makeFinishedGrid, makeClues } from '../../util/data';
 import * as utils from '../../util/utilities';
 
-import Nav from './Nav';
+import { NavWrapper } from '../common/NavWrapper';
 import Grid from './Grid';
 import Clues from './Clues';
 import ClueBanner from './ClueBanner';
@@ -35,7 +35,7 @@ class Solve extends Component {
 			puzzleAuthor: null,
 			isAcross: true,
 			notesMode: false,
-			ignoredDays: ["sunday"],
+			ignoredDays: [],
 			labels: [],
 			loading: true,
 			paused: false,
@@ -62,11 +62,14 @@ class Solve extends Component {
 
 	componentDidMount() {
 		var self = this;
+		this.props.changeActivePage("solve");
 		setTimeout(function() {
-			const storedState = localStorage.getItem('solveState');
-			if (storedState) {
-				console.log(JSON.parse(storedState));
-				self.setState(JSON.parse(storedState));
+			const storedState = JSON.parse(localStorage.getItem('solveState'));
+			if (storedState && storedState.finishedGrid && storedState.finishedGrid.length) {
+				// dont keep track of ignored days
+				delete storedState.ignoredDays;
+				console.log(storedState);
+				self.setState(storedState);
 			} else {
 				self.setupPuzzle()
 			}
@@ -76,18 +79,23 @@ class Solve extends Component {
 		smoothscroll.polyfill();
 	}
 
+	componentWillUnmount() {
+		this.saveState();
+	}
+
 	setupPuzzle() {
 		var self = this;
 		fetchRandomData(this.state.ignoredDays)
 			.then(response => {
-				if (response && response.data && response.data.size && response.data.size.cols === 15 
-					&& response.data.size.rows === 15 && !utils.isRebus(response.data.grid)) {
+				// only allow 15x15 or 21x21 puzzles
+				if (response && response.data && response.data.size 
+					&& ((response.data.size.cols === 15 && response.data.size.rows === 15)
+					|| (response.data.size.cols === 21 && response.data.size.rows === 21))
+					&& !utils.isRebus(response.data.grid)) {
 					console.log(response.data);
 
 					const finishedGrid = makeFinishedGrid(response.data.grid);
 					const grid = finishedGrid.slice().map(char => char ? null : char);
-					// const grid = finishedGrid.slice();
-					// grid[1] = null;
 					const clues = makeClues(response.data.clues, response.data.gridnums);
 
 					self.setState({
@@ -101,8 +109,8 @@ class Solve extends Component {
 						puzzleAuthor: response.data.author,
 						activeClue: utils.findFirstActiveClues(true, clues),
 						altDirectionActiveClue: utils.findFirstActiveClues(false, clues),
-						activeCell: utils.findFirstActiveCells(grid, true, finishedGrid.length)[0],
-						activeClueCells: utils.findFirstActiveCells(grid, true, finishedGrid.length)[1],
+						activeCell: utils.findFirstActiveCells(grid, true, response.data.size.cols)[0],
+						activeClueCells: utils.findFirstActiveCells(grid, true, response.data.size.cols)[1],
 						correctCells: [],
 						incorrectCells: [],
 						revealedCells: [],
@@ -140,7 +148,8 @@ class Solve extends Component {
 
 		// ignore meta keys
 		if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-	        e.preventDefault();
+			e.preventDefault();
+			// return;
 	    }
 
 		// valid characters
@@ -309,12 +318,12 @@ class Solve extends Component {
 			alert("No days selected");
 			return;
 		}
-
 		this.setState({loading: true, hasStarted: false});
+
+		// fake loading time
 		setTimeout(() => {
 			self.setupPuzzle()
 		}, 1); 
-
 	}
 
 	handleCheckClick(type) {
@@ -334,7 +343,7 @@ class Solve extends Component {
 				break;
 			// puzzle
 			case 2:
-				cellsToCheck = utils.findAllCells(this.state.grid, this.state.rowLength);
+				cellsToCheck = utils.findAllCells(this.state.grid);
 				break;
 
 			default:
@@ -377,7 +386,7 @@ class Solve extends Component {
 				break;
 			// puzzle
 			case 2:
-				cellsToReveal = utils.findAllCells(this.state.grid, this.state.rowLength);
+				cellsToReveal = utils.findAllCells(this.state.grid);
 				break;
 
 			default:
@@ -641,6 +650,7 @@ class Solve extends Component {
 	     		</div>
 	     		<div className="CluesHalf">
 					<Clues 
+						mode="solve"
 						clues={this.state.clues}
 						grid={this.state.grid}
 						activeClue={this.state.activeClue}
@@ -651,10 +661,12 @@ class Solve extends Component {
      		</div>);
 
 		return (
-			<div className="SolveContainer">
+			<Fragment>
 				<div className={"Solve " + (this.shouldBlurBackground() ? "blur" : "")}>
 					<div className="NavContainer">
-						<Nav 
+						<NavWrapper 
+							mode="solve"
+							toggleSidebarOpen={this.props.toggleSidebarOpen}
 							handleTimerPause={this.handleTimerPause}
 							handleNewPuzzleClick={this.handleNewPuzzleClick} 
 							handleCheckClick={this.handleCheckClick}
@@ -671,10 +683,6 @@ class Solve extends Component {
 							finished={this.state.finished} />
 					</div>
 					{body}
-
-					<div className="tab">
-						<p>Create</p>
-					</div>
 			    </div> 
 
 			    <Modal 
@@ -685,7 +693,7 @@ class Solve extends Component {
 					timerValue={this.state.timerValue}
 					finished={this.state.finished}
 					correct={this.state.correct} />
-		   </div>
+		   </Fragment>
 		);
 	}
 }

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {formatTime} from '../../util/utilities';
-import pauseIcon from '../../pause.svg';
+import pauseIcon from '../../icon/pause.svg';
 import './styles/Timer.css';
 
 class Timer extends Component {
@@ -16,11 +16,7 @@ class Timer extends Component {
         this.runTimer(this.props.finished, this.props.correct);
 
         // pause game before page close and save state to local storage 
-		window.addEventListener('beforeunload', e => {
-            e.preventDefault();
-			this.props.handleTimerPause(this.state.time);
-			this.props.onPageUnload();
-		});
+		window.addEventListener('beforeunload', this.beforeUnload.bind(this));
     }
 
     componentDidUpdate(prevProps) {
@@ -29,10 +25,21 @@ class Timer extends Component {
         }
     }
 
+    componentWillUnmount() {
+        clearInterval(this.intervalId);
+        window.removeEventListener('beforeunload', this.beforeUnload);
+    }
+
+    beforeUnload(e) {
+        e.preventDefault();
+        this.props.handleTimerPause(this.state.time);
+        this.props.onPageUnload();
+    }
+
     runTimer() {
         let finishedAndCorrectFlag;
         let hasStartedFlag;
-		setInterval(() => {
+		this.intervalId = setInterval(() => {
 			if (this.props.finished && this.props.correct) {
                 finishedAndCorrectFlag = true;
             }
