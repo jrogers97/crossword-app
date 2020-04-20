@@ -1,6 +1,6 @@
 import React from 'react';
-import './styles/Grid.css';
-
+import styled from 'styled-components';
+// import './styles/Grid.css';
 import GridRow from './GridRow';
 
 const findRowsCells = (cells, row, rowLength) => cells.filter(cell => Math.floor(cell / rowLength) === row);
@@ -20,7 +20,7 @@ const Grid = ({
 	handleCellClick
 }) => {
 	return (
-		<div className="GridContainer">
+		<GridContainer>
 			{[...Array(rowLength)].map((num, i) => 
 				<GridRow 
 					key={i} 
@@ -37,8 +37,20 @@ const Grid = ({
 					noteCells={noteCells ? findRowsCells(noteCells, i, rowLength) : []}
 					handleCellClick={handleCellClick} />
 			)}
-		</div>
+		</GridContainer>
 	);
 }
+
+const GridContainer = styled.div`
+	width: 100%;
+	height: 480px;
+	margin-bottom: 10px;
+	@media (max-width: 1000px) {
+		height: 400px;
+	}
+	@media (max-width: 650px) {
+		height: 350px;
+	}
+`;
 
 export default Grid;

@@ -1,5 +1,6 @@
 import React from 'react';
-import './styles/PuzzleHeader.css';
+import styled from 'styled-components';
+// import './styles/PuzzleHeader.css';
 
 const makePuzzleTitle = (date) => {
 	if (!date) {
@@ -23,14 +24,43 @@ const PuzzleHeader = ({date, author}) => {
 	const [day, formattedDate] = makePuzzleTitle(date);
 
 	return (
-		<div className="PuzzleHeader"> 
-			<div className="PuzzleHeader-DateWrapper">
-				<span className="PuzzleHeader-Day">{ day }</span>
-				<span className="PuzzleHeader-Date">{ formattedDate }</span>
+		<StyledPuzzleHeader> 
+			<div>
+				<PuzzleDay> {day} </PuzzleDay>
+				<span> {formattedDate} </span>
 			</div>
-			<span className="PuzzleHeader-Author">{ "by " + author }</span>
-		</div>
+			<PuzzleAuthor> {"by " + author} </PuzzleAuthor>
+		</StyledPuzzleHeader>
 	);
 }
+
+const StyledPuzzleHeader = styled.div`
+	width: 100%;
+	margin: 10px 0 14px 0;
+	font-size: 20px;
+	display: flex;
+	align-items: flex-end;
+	@media (max-width: 1000px) {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+`;
+
+const PuzzleDay = styled.span`
+	font-weight: bold;
+	margin-right: 8px;
+`;
+
+const PuzzleAuthor = styled.span`
+	margin-left: auto;
+	font-style: italic;
+	font-size: 15px;
+	max-width: 220px;
+	text-align: right;
+	@media (max-width: 1000px) {
+		text-align: left;
+		margin-left: 0;
+	}
+`;
 
 export default PuzzleHeader;

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import './styles/CluesListColumn.css';
+import styled from 'styled-components';
+// import './styles/CluesListColumn.css';
 
 import CluesListItem from './CluesListItem';
 
@@ -16,7 +17,7 @@ class CluesListColumn extends Component {
 	componentDidMount() {
 		this.listColumnNode = document.querySelector(`#${this.props.label}`);
 		this.listColumnOffset = this.listColumnNode.offsetTop;
-		this.listItems = Array.from(document.querySelectorAll(`#${this.props.label} .CluesListItem`));
+		this.listItems = Array.from(document.querySelectorAll(`#${this.props.label} .clues-list-item`));
 	}
 
 	componentDidUpdate() {
@@ -44,9 +45,9 @@ class CluesListColumn extends Component {
 
 	render() {
 		return (
-			<div className="CluesListColumn-Container">
-				<p className="CluesListColumn-Label"> {this.props.label} </p>
-				<ul className="CluesListColumn" id={this.props.label}>
+			<CluesListColumnContainer>
+				<CluesListColumnLabel> {this.props.label} </CluesListColumnLabel>
+				<StyledCluesListColumn id={this.props.label}>
 					{Object.keys(this.props.clues).map(clueNum => 
 						<CluesListItem 
 							key={clueNum} 
@@ -56,12 +57,34 @@ class CluesListColumn extends Component {
 							isActive={this.isActiveClue(clueNum, this.props.activeClue)}
 							isGreyed={this.isGreyedClue(clueNum)}
 							isAltDirectionActive={this.isActiveClue(clueNum, this.props.altDirectionActiveClue)}
-							handleClueClick={this.props.handleClueClick} />
+							handleClueClick={this.props.handleClueClick} 
+							handleClueInput={this.props.handleClueInput} />
 					)}
-				</ul>
-			</div>
+				</StyledCluesListColumn>
+			</CluesListColumnContainer>
 		);
 	}
 }
+
+const CluesListColumnContainer = styled.div`
+	width: 100%;
+	height: 100%;	
+	margin-right: 10px;
+	@media (max-width: 920px) {
+		height: 46%;
+	}
+`;
+
+const CluesListColumnLabel = styled.p`
+	font-weight: bold;
+	padding: 18px 0 5px 0;
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+`;
+
+const StyledCluesListColumn = styled.ul`
+	overflow-y: scroll;
+	max-height: 85%;
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+`;
 
 export default CluesListColumn;

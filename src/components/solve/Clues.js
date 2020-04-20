@@ -1,5 +1,6 @@
 import React from 'react';
-import './styles/Clues.css';
+import styled from 'styled-components';
+// import './styles/Clues.css';
 
 import CluesListColumn from './CluesListColumn';
 
@@ -28,9 +29,9 @@ const separateAcrossDownGreyedClues = (greyedClues) => {
 	return separatedClues;
 }
 
-const Clues = ({clues, grid, activeClue, altDirectionActiveClue, greyedClues, handleClueClick, mode}) => {
+const Clues = ({clues, grid, activeClue, altDirectionActiveClue, greyedClues, handleClueClick, handleClueInput, mode}) => {
 	return (
-		<div className="CluesContainer">
+		<CluesContainer>
 			<CluesListColumn 
 				mode={mode}
 				clues={separateAcrossDownClues(clues)[0]} 
@@ -39,6 +40,7 @@ const Clues = ({clues, grid, activeClue, altDirectionActiveClue, greyedClues, ha
 				activeClue={activeClue}
 				altDirectionActiveClue={altDirectionActiveClue}
 				handleClueClick={handleClueClick}
+				handleClueInput={handleClueInput}
 				label="Across" />
 			<CluesListColumn 
 				mode={mode}
@@ -48,9 +50,22 @@ const Clues = ({clues, grid, activeClue, altDirectionActiveClue, greyedClues, ha
 				activeClue={activeClue}
 				altDirectionActiveClue={altDirectionActiveClue}
 				handleClueClick={handleClueClick}
+				handleClueInput={handleClueInput}
 				label="Down" />
-		</div>
+		</CluesContainer>
 	);
 }
+
+const CluesContainer = styled.div`
+	min-height: 540px;
+	height: 100%;
+	display: flex;
+	margin-right: 5px;
+	max-width: 600px;
+	@media (max-width: 920px) {
+		flex-direction: column;
+		max-width: 480px;
+	}
+`;
 
 export default Clues;

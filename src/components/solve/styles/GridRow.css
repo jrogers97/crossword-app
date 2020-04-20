@@ -1,3 +1,6 @@
+/* 
+REPLACED WITH STYLED COMPONENTS
+
 .GridRow {
 	display: flex;
 	height: 6.666667%;
@@ -38,4 +41,4 @@
 
 .GridCellContainer-sunday:nth-child(21n) {
 	border-right: 1px solid #383838;
-}
+} */

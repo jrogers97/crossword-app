@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import smoothscroll from 'smoothscroll-polyfill';
 import ClipLoader from 'react-spinners/ClipLoader';
-import './styles/Solve.css';
+// import './styles/Solve.css';
+import styled from 'styled-components';
 import { fetchRandomData, makeFinishedGrid, makeClues } from '../../util/data';
 import * as utils from '../../util/utilities';
 
@@ -35,6 +36,7 @@ class Solve extends Component {
 			puzzleAuthor: null,
 			isAcross: true,
 			notesMode: false,
+			progressSaved: false,
 			ignoredDays: [],
 			labels: [],
 			loading: true,
@@ -66,8 +68,10 @@ class Solve extends Component {
 		setTimeout(function() {
 			const storedState = JSON.parse(localStorage.getItem('solveState'));
 			if (storedState && storedState.finishedGrid && storedState.finishedGrid.length) {
-				// dont keep track of ignored days
+				// dont keep track of ignored days/notes mode
 				delete storedState.ignoredDays;
+				delete storedState.notesMode;
+				storedState.progressSaved = true;
 				console.log(storedState);
 				self.setState(storedState);
 			} else {
@@ -79,9 +83,9 @@ class Solve extends Component {
 		smoothscroll.polyfill();
 	}
 
-	componentWillUnmount() {
-		this.saveState();
-	}
+	// componentWillUnmount() {
+	// 	this.saveState();
+	// }
 
 	setupPuzzle() {
 		var self = this;
@@ -121,7 +125,8 @@ class Solve extends Component {
 						timerValue: 0,
 						shouldCheckFinishedGrid: true,
 						correct: false,
-						finished: false
+						finished: false,
+						progressSaved: false
 					});
 				} else {
 					console.log('Fetching new puzzle');
@@ -138,18 +143,23 @@ class Solve extends Component {
 
 	// save state to local storage
 	saveState() {
-		localStorage.setItem('solveState', JSON.stringify(this.state));
+		if (!this.state.progressSaved) {
+			console.log('saving state');
+			localStorage.setItem('solveState', JSON.stringify(this.state));
+			this.setState({progressSaved: true});
+		}
 	}
 
 	handleKeyDown(e) {
 		if (this.state.loading || this.state.paused || !this.state.hasStarted) {
+			console.log('return solve');
 			return;
 		}
 
 		// ignore meta keys
 		if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+			console.log('prevent default solve');
 			e.preventDefault();
-			// return;
 	    }
 
 		// valid characters
@@ -259,7 +269,8 @@ class Solve extends Component {
 			this.setState({
 				grid: newGrid,
 				noteCells: newNoteCells,
-				greyedClues: newGreyedClues
+				greyedClues: newGreyedClues,
+				progressSaved: false
 			});
 			
 			if (utils.isGridComplete(newGrid)) {
@@ -365,7 +376,8 @@ class Solve extends Component {
 
 			this.setState({
 				incorrectCells: incorrectCells,
-				correctCells: correctCells
+				correctCells: correctCells,
+				progressSaved: false
 			});
 		});
 	}
@@ -373,6 +385,7 @@ class Solve extends Component {
 	handleRevealClick(type) {
 		let revealedCells = this.state.revealedCells.slice();
 		let correctCells = this.state.correctCells.slice();
+		let incorrectCells = this.state.incorrectCells.slice();
 		let cellsToReveal;
 
 		switch(type) {
@@ -401,6 +414,10 @@ class Solve extends Component {
 				if (this.state.grid[cell] !== this.state.finishedGrid[cell]) {
 					newGrid[cell] = this.state.finishedGrid[cell];
 					revealedCells.push(cell);
+					// remove cell from incorrect list if present
+					if (utils.isCellInGroup(incorrectCells, cell)) {
+						utils.removeArrayItem(incorrectCells, cell);
+					}
 				}
 
 				// every revealed cell is also marked as correct
@@ -416,7 +433,9 @@ class Solve extends Component {
 			revealedCells: revealedCells,
 			correctCells: correctCells,
 			greyedClues: newGreyedClues,
-			grid: newGrid
+			incorrectCells: incorrectCells,
+			grid: newGrid,
+			progressSaved: false
 		});
 
 		if (utils.isGridComplete(newGrid)) {
@@ -618,19 +637,20 @@ class Solve extends Component {
 	render() {
 		const body = this.state.loading ? 
 		
-			<div className="LoaderContainer">
+			<LoaderContainer>
 				<ClipLoader 
 					size={100}
 					color={"#a7d8ff"}
 					loading={true} />
-			</div> :
+			</LoaderContainer> :
 
-			(<div className="BodyContainer">
-		    	<div className="GridHalf">
-					<div className="GridHalf-Rail">
+			(<BodyContainer>
+		    	<GridHalf>
+					<GridHalfRail>
 						<PuzzleHeader date={this.state.puzzleDate} author={this.state.puzzleAuthor} />
 
 						<ClueBanner 
+							mode="solve"
 							label={Object.keys(this.state.activeClue)[0]}
 							clue={this.state.activeClue[Object.keys(this.state.activeClue)[0]]} />
 
@@ -644,11 +664,10 @@ class Solve extends Component {
 				     	    revealedCells={this.state.revealedCells}
 				     	    noteCells={this.state.noteCells}
 				     	    handleCellClick={this.handleCellClick}
-				     	    labels={this.state.labels}
-				     	    clues={this.state.clues} />
-		     	    </div>
-	     		</div>
-	     		<div className="CluesHalf">
+				     	    labels={this.state.labels} />
+		     	    </GridHalfRail>
+	     		</GridHalf>
+	     		<CluesHalf>
 					<Clues 
 						mode="solve"
 						clues={this.state.clues}
@@ -657,13 +676,13 @@ class Solve extends Component {
 						altDirectionActiveClue={this.state.altDirectionActiveClue}
 						greyedClues={this.state.greyedClues}
 						handleClueClick={this.handleClueClick} />
-	     		</div>
-     		</div>);
+	     		</CluesHalf>
+     		</BodyContainer>);
 
 		return (
 			<Fragment>
-				<div className={"Solve " + (this.shouldBlurBackground() ? "blur" : "")}>
-					<div className="NavContainer">
+				<StyledSolve blurred={(this.state.paused || !this.state.hasStarted) && !this.state.loading}>
+					<NavContainer>
 						<NavWrapper 
 							mode="solve"
 							toggleSidebarOpen={this.props.toggleSidebarOpen}
@@ -673,17 +692,19 @@ class Solve extends Component {
 							handleRevealClick={this.handleRevealClick}
 							handleClearClick={this.handleClearClick}
 							handleNotesClick={this.handleNotesClick}
+							handleSaveClick={this.saveState}
+							notesActive={this.notesMode}
 							onCheckboxChange={this.handleCheckboxChange}
-							onPageUnload={this.saveState}
+							progressSaved={this.state.progressSaved}
 							timerValue={this.state.timerValue}
 							hasStarted={this.state.hasStarted}
 							loading={this.state.loading}
 							paused={this.state.paused}
 							correct={this.state.correct}
 							finished={this.state.finished} />
-					</div>
+					</NavContainer>
 					{body}
-			    </div> 
+			    </StyledSolve> 
 
 			    <Modal 
 					handleModalButtonClick={this.handleModalButtonClick}
@@ -697,5 +718,76 @@ class Solve extends Component {
 		);
 	}
 }
+
+const StyledSolve = styled.div`
+	max-width: 100vw;
+	max-height: 100vh;
+	height: 100vh;
+	width: 100vw;
+	transition: filter 300ms ease-in-out;
+	filter: ${props => props.blurred ? "blur(3px)" : "blur(0)"};
+`;
+
+const LoaderContainer = styled.div`
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -50px;
+	margin-left: -50px;
+`;
+
+const NavContainer = styled.div`
+	height: 45px;
+    width: 100%;
+`;
+
+const BodyContainer = styled.div`
+	max-width: 100%;
+	max-height: 100%;
+	height: calc(100% - 53px);
+	display: flex;
+`;
+
+const GridHalf = styled.div`
+	width: 50%;
+	@media (max-width: 1000px) {
+		width: 45%;
+	}
+	@media (max-width: 920px) {
+		width: 410px;
+	}
+	@media (max-width: 650px) {
+		width: 40%;
+      	min-width: 360px;
+	}	
+`;
+
+const GridHalfRail = styled.div`
+	height: 100%;
+	width: 480px;
+	margin: 0 auto;
+	@media (max-width: 1000px) {
+		width: 400px;
+      	padding-top: 10px;
+	}
+	@media (max-width: 650px) {
+		width: 350px;
+	}	
+`;
+
+const CluesHalf = styled.div`
+	width: 50%;
+	@media (max-width: 1000px) {
+		width: 55%;
+	}
+	@media (max-width: 920px) {
+		max-width: 450px;
+		margin-left: 20px;
+	}
+	@media (max-width: 650px) {
+		width: 60%;
+      	margin-left: 10px;
+	}	
+`;
 
 export default Solve;

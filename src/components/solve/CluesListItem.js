@@ -1,47 +1,85 @@
 import React from 'react';
-import './styles/CluesListItem.css';
+import TextareaAutosize from 'react-textarea-autosize';
+import styled from 'styled-components';
+// import './styles/CluesListItem.css';
 
-const getClueClass = (isActive, isGreyed) => {
-	let cssClass = "CluesListItem ";
-
-	if (isActive) {
-		cssClass += " activeClueListItem";
-	}
-
-	if (isGreyed) {
-		cssClass += " greyed";
-	}
-
-	return cssClass;
-};
-
-const getClueSideLabelClass = isAltDirectionActive => {
-	return "CluesListItem-SideTab" + (isAltDirectionActive ? " altActiveClueSideTab" : "");
-}
-
-const getClueTextClass = clue => {
-	return "CluesListItem-Text" + (clue.includes("*") ? " italic" : "");
-}
-
-const CluesListItem = ({clueNum, clueText, isActive, isAltDirectionActive, isGreyed, handleClueClick, mode}) => {
+const CluesListItem = React.memo(({clueNum, clueText, isActive, isAltDirectionActive, isGreyed, handleClueClick, handleClueInput, mode}) => {
 	return (
-		<li id={clueNum} 
-			className={getClueClass(isActive, isGreyed)} 
+		<StyledClueListItem 
+			id={clueNum}
+			className={"clues-list-item"}
+			isActive={isActive}
+			isGreyed={isGreyed} 
 			onClick={e => handleClueClick(e, clueNum)}>
 
-			<span className={getClueSideLabelClass(isAltDirectionActive)}></span>
+			<ClueSideTab isAltDirectionActive={isAltDirectionActive}></ClueSideTab>
 
-			<span className="CluesListItem-Label">
+			<ClueLabel>
 				{clueNum.replace(/\D+/g, '')}
-			</span>
+			</ClueLabel>
 
-			<span className={getClueTextClass(clueText)}>
+			<ClueText clueText={clueText}>
 				{mode === "create" 
-					? <textarea placeholder="Add clue" className="CluesListItem-Input" defaultValue={clueText}/> 
+					? <ClueTextInput 
+						placeholder="Add clue"
+						defaultValue={clueText}
+						isActive={isActive}
+						data-clue-num={clueNum}
+						onChange={handleClueInput} />
 					: clueText} 
-			</span>
-		</li>
+			</ClueText>
+		</StyledClueListItem>
 	);
-}
+})
+
+const StyledClueListItem = styled.li`
+	font-size: 14px;
+	display: flex;
+	line-height: 1.5;
+	background-color: ${props => props.isActive ? "#a7d8ff!important" : "initial"};
+	color: ${props => props.isGreyed ? "#808080" : "initial"};
+	&:hover {
+		background-color: rgba(167, 216, 255, 0.25);
+		cursor: pointer;
+	}
+`;
+
+const ClueSideTab = styled.span`
+	min-width: 10px;
+	background-color: ${props => props.isAltDirectionActive ? "#a7d8ff!important" : "initial"};
+`;
+
+const ClueLabel = styled.span`
+	font-weight: bold;
+	min-width: 25px;
+	text-align: right;
+	padding: 4px;
+`;
+
+const ClueText = styled.span`
+	margin-left: 3px;
+	padding: 4px 8px 4px 4px;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	font-style: ${props => props.clueText.includes("*") ? "italic" : "normal"};
+`;
+
+// manually filter out 'isActive' prop so we don't pass to DOM
+const ClueTextInput = styled(({isActive, ...rest}) => <TextareaAutosize {...rest}/>)`
+	background-color: transparent;
+	border: none;
+	font-size: 14px;
+	height: 18px;
+	width: 100%;
+	display: block;
+	resize: none;
+	&:focus {
+		outline: none;
+	}
+	&::placeholder {
+		opacity: ${props => props.isActive ? "1" : "0"};
+	}
+`;
 
 export default CluesListItem;

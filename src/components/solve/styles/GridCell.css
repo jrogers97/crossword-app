@@ -1,7 +1,9 @@
+/* 
+REPLACED WITH STYLED COMPONENTS
+
 .GridCell {
 	height: 100%;
 	width: 100%;
-	/* display: table; */
 	position: relative;
 	display: flex;
 	justify-content: center;
@@ -9,13 +11,11 @@
 }
 
 .GridCell-text {
-	/* display: table-cell; */
 	vertical-align: middle;
 	text-align: center;
 	font-size: 20px;
 	font-weight: 600;
 	padding-top: 7px;
-	/* padding-left: 3px; */
 }
 
 .text-sunday {
@@ -45,7 +45,6 @@
 	background-color: #E63333;
 	top: 14px;
 	left: -7px;
-	border-radius: 2px;
 }
 
 .GridCell-revealed {
@@ -122,4 +121,4 @@
 	.text-sunday {
 		font-size: 13px!important;
 	}
-}
+} */

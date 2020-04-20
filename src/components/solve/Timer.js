@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {formatTime} from '../../util/utilities';
 import pauseIcon from '../../icon/pause.svg';
-import './styles/Timer.css';
+import styled from 'styled-components';
+// import './styles/Timer.css';
 
 class Timer extends Component {
     constructor(props) {
@@ -14,26 +15,12 @@ class Timer extends Component {
 
     componentDidMount() {
         this.runTimer(this.props.finished, this.props.correct);
-
-        // pause game before page close and save state to local storage 
-		window.addEventListener('beforeunload', this.beforeUnload.bind(this));
     }
 
     componentDidUpdate(prevProps) {
         if (!prevProps.value && this.props.value) {
             this.setState({time: this.props.value});
         }
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.intervalId);
-        window.removeEventListener('beforeunload', this.beforeUnload);
-    }
-
-    beforeUnload(e) {
-        e.preventDefault();
-        this.props.handleTimerPause(this.state.time);
-        this.props.onPageUnload();
     }
 
     runTimer() {
@@ -61,20 +48,45 @@ class Timer extends Component {
 
     render() {
         return (
-            <div className="Timer">
-                <span className="Timer-Text">
-                    {formatTime(this.state.time)}
-                </span>
+            <StyledTimer>
+                <span> {formatTime(this.state.time)} </span>
 
-                <button 
-                    className="Timer-Pause" 
-                    onClick={() => this.props.handleTimerPause(this.state.time)}>
-                    
-                    <img src={pauseIcon} alt="Pause" className="Timer-PauseIcon" />
-                </button> 
-            </div>
+                <PauseButton onClick={() => this.props.handleTimerPause(this.state.time)}>
+                    <PauseIcon src={pauseIcon} alt="Pause"/>
+                </PauseButton> 
+            </StyledTimer>
         );
     }
 }
+
+const StyledTimer = styled.div`
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    @media(max-width: 700px) {
+        margin-right: 0;
+    }
+`;
+
+const PauseButton = styled.button`
+    border: none;
+    background-color: transparent;
+    height: 16px;
+    width: 16px;
+    margin-left: 5px;
+    &:hover {
+        cursor: pointer;
+    }
+    &:focus {
+        outline: none;
+    }
+`;
+
+const PauseIcon = styled.img`
+    height: 100%;
+	width: 100%;
+    fill: #DCEFFE;
+
+`;
 
 export default Timer;

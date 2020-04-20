@@ -1,12 +1,5 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-user-select: none; /* Safari */        
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+/Edge */
-  user-select: none; /* Standard */
-}
+/*
+REPLACED WITH STYLED COMPONENTS
 
 .Solve {
   max-width: 100vw;
@@ -15,7 +8,6 @@
   width: 100vw;
   filter: blur(0);
   transition: filter 300ms ease-in-out;
-  /* overflow: hidden; */
 }
 
 .BodyContainer {
@@ -97,4 +89,4 @@
   .GridHalf-Rail {
     width: 350px;
   }
-}
+} */

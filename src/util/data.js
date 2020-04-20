@@ -85,21 +85,7 @@ export const splitKeepRemainder = (str, separator, limit) => {
 	return str;
 }
 
-// export const makeEmptyClues = (rowLength) => {
-// 	let cluesMap = {};
-// 	for (let i = 1; i < rowLength + 1; i++) {
-// 		["A", "D"].forEach(dir => {
-// 			cluesMap[`${i}${dir}`] = {
-// 				startCell: dir === "A" ? ((i - 1) * rowLength) : i - 1,
-// 				clue: ""
-// 			}
-// 		});
-// 	}
-// 	return cluesMap;	
-// }
-
-export const buildCreateClues = (grid, rowLength, oldClues = {"2D": {startCell: 1, clue: "test clue"}}) => {
-
+export const buildCreateClues = (grid, rowLength, oldClues = {}) => {
 	let cluesMap = {};
 	let clueLabel = 1;
 	grid.forEach((cell, idx) => {
@@ -113,22 +99,18 @@ export const buildCreateClues = (grid, rowLength, oldClues = {"2D": {startCell: 
 				};
 				addedClue = true;
 			}
-
 			if (idx < rowLength || grid[idx - rowLength] === false) {
 				const downLabel = `${clueLabel}D`;
-
 				cluesMap[`${clueLabel}D`] = {
 					startCell: idx,
 					clue: oldClues.hasOwnProperty(downLabel) ? oldClues[downLabel].clue : ""
 				};
 				addedClue = true;
 			}
-
 			if (addedClue) {
 				clueLabel++;
 			}
 		}
 	});
-	console.log(cluesMap);
 	return cluesMap;
 }

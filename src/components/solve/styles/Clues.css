@@ -1,7 +1,9 @@
+/* 
+REPLACED WITH STYLED COMPONENTS
+
 .CluesContainer {
 	min-height: 540px;
-	/* max-height: 85vh; */
-	height: 100vh;
+	height: 100%;
 	display: flex;
 	margin-right: 5px;
 	max-width: 600px;
@@ -12,4 +14,4 @@
 		flex-direction: column;
 		max-width: 480px;
 	}
-}
+} */

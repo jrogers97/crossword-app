@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import smoothscroll from 'smoothscroll-polyfill';
 import ClipLoader from 'react-spinners/ClipLoader';
-import '../solve//styles/Solve.css';
+// import '../create/styles/Create.css';
+import styled from 'styled-components';
 import { buildCreateClues } from '../../util/data';
 import * as utils from '../../util/utilities';
 
@@ -33,9 +34,11 @@ class Create extends Component {
         
 		this.handleCellClick        = this.handleCellClick.bind(this);
 		this.handleClueClick        = this.handleClueClick.bind(this);
+		this.handleClueInput        = this.handleClueInput.bind(this);
         this.handleKeyDown          = this.handleKeyDown.bind(this);
         this.handleBlankClick       = this.handleBlankClick.bind(this);
 		this.handleNotesClick       = this.handleNotesClick.bind(this);
+		this.handleSaveClick        = this.handleSaveClick.bind(this);
 		this.saveState				= this.saveState.bind(this);
 	}
 
@@ -63,9 +66,6 @@ class Create extends Component {
 	setupPuzzle() {
         const rowLength = this.state.rowLength;
         const grid = new Array(rowLength * rowLength).fill(null);
-        // grid[4] = false;
-        // grid[5] = false;
-        // grid[37] = false;
         const clues = buildCreateClues(grid, rowLength);
         const labels = utils.makeLabels(clues);
 
@@ -90,15 +90,14 @@ class Create extends Component {
 	}
 
 	handleKeyDown(e) {
-
+		console.log(document.activeElement.tagName);
 		if (this.state.loading || document.activeElement.tagName === "TEXTAREA") {
 			return;
 		}
 
 		// ignore meta keys
-		if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+		if (document.activeElement.tagName === "TEXTAREA" && [32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
 			e.preventDefault();
-			// return;
 	    }
 
 		// valid characters
@@ -131,7 +130,7 @@ class Create extends Component {
 			if (e.keyCode === 38) {
 				if (this.state.isAcross) {
 					this.setState({
-						activeClueCells: activeClueCellsDown,
+					activeClueCells: activeClueCellsDown,
 						activeClue: activeClueDown,
 						altDirectionActiveClue: activeClueAcross,
 						isAcross: false
@@ -202,7 +201,6 @@ class Create extends Component {
         });
         
         if (utils.isGridComplete(newGrid)) {
-            console.log('finished');
             return;
         }
 
@@ -244,13 +242,15 @@ class Create extends Component {
         } else {
             newGrid[cell] = false;
         }
-        const newClues = buildCreateClues(newGrid, this.state.rowLength, this.state.clues);
+		const newClues = buildCreateClues(newGrid, this.state.rowLength, this.state.clues);
+		const newActiveClueCells = utils.findActiveClueCells(this.state.activeCell, this.state.isAcross, newGrid, this.state.rowLength);
         const newLabels = utils.makeLabels(newClues);
 
         this.setState({
             grid: newGrid,
             clues: newClues,
-            labels: newLabels
+			labels: newLabels,
+			activeClueCells: newActiveClueCells
         })
     }
 
@@ -272,6 +272,15 @@ class Create extends Component {
 		});
 	}
 
+	handleClueInput(e) {
+		let newClues = Object.assign({}, this.state.clues);
+		const clueNum = e.target.getAttribute("data-clue-num");
+		if (clueNum && newClues[clueNum]) {
+			newClues[clueNum].clue = e.target.value;
+		}
+		this.setState({clues: newClues});
+	}
+
 	handleClearClick(e) {
 		const newGrid = this.state.grid.slice().map(char => char ? null : char);
 		this.setState({
@@ -285,6 +294,14 @@ class Create extends Component {
 
 	handleNotesClick(e) {
 		this.setState({notesMode: !this.state.notesMode});
+	}
+
+	handleSaveClick(e) {
+		console.log('save puzzle');
+	}
+
+	handleLoadClick(e) {
+		console.log('load puzzle');
 	}
 
 	moveToNextCell(isAcross, ignoreUnfinishedClues, wasEmptyCell) {
@@ -410,32 +427,33 @@ class Create extends Component {
 	render() {
 		const body = this.state.loading ? 
 		
-			<div className="LoaderContainer">
+			<LoaderContainer>
 				<ClipLoader 
 					size={100}
 					color={"#a7d8ff"}
 					loading={true} />
-			</div> :
+			</LoaderContainer> :
 
-			(<div className="BodyContainer">
-		    	<div className="GridHalf">
-					<div className="GridHalf-Rail">
+			(<BodyContainer>
+		    	<GridHalf>
+					<GridHalfRail>
 						<ClueBanner 
+							mode="create"
 							label={Object.keys(this.state.activeClue)[0]}
-							clue={this.state.activeClue[Object.keys(this.state.activeClue)[0]]} />
+							clue={this.state.activeClue[Object.keys(this.state.activeClue)[0]]} 
+							handleClueInput={this.handleClueInput}/>
 
-					    <Grid 
+					    <Grid
 					        grid={this.state.grid}
 				     	    rowLength={this.state.rowLength} 
 				     	    activeCell={this.state.activeCell}
 				     	    activeClueCells={this.state.activeClueCells}
 				     	    noteCells={this.state.noteCells}
 				     	    handleCellClick={this.handleCellClick}
-				     	    labels={this.state.labels}
-				     	    clues={this.state.clues} />
-		     	    </div>
-	     		</div>
-	     		<div className="CluesHalf">
+				     	    labels={this.state.labels} />
+		     	    </GridHalfRail>
+	     		</GridHalf>
+	     		<CluesHalf>
                     <Clues 
                         mode="create"
 						clues={this.state.clues}
@@ -443,25 +461,97 @@ class Create extends Component {
 						activeClue={this.state.activeClue}
 						altDirectionActiveClue={this.state.altDirectionActiveClue}
 						greyedClues={this.state.greyedClues}
-						handleClueClick={this.handleClueClick} />
-	     		</div>
-     		</div>);
+						handleClueClick={this.handleClueClick}
+						handleClueInput={this.handleClueInput} />
+	     		</CluesHalf>
+     		</BodyContainer>);
 
 		return (
-            <div className="Create">
-                <div className="NavContainer">
+            <StyledCreate>
+                <NavContainer>
                     <NavWrapper
                         mode="create"
                         toggleSidebarOpen={this.props.toggleSidebarOpen}
                         handleClearClick={this.handleClearClick}
                         handleBlankClick={this.handleBlankClick}
-                        handleNotesClick={this.handleNotesClick}
-                        onPageUnload={this.saveState} />
-                </div>
+                        handleSaveClick={this.handleSaveClick}
+                        handleLoadClick={this.handleLoadClick} />
+                </NavContainer>
                 {body}
-            </div> 
+            </StyledCreate> 
 		);
 	}
 }
+
+const StyledCreate = styled.div`
+	max-width: 100vw;
+	max-height: 100vh;
+	height: 100vh;
+	width: 100vw;
+	filter: blur(0);
+	transition: filter 300ms ease-in-out;
+`;
+
+const LoaderContainer = styled.div`
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -50px;
+	margin-left: -50px;
+`;
+
+const NavContainer = styled.div`
+	height: 45px;
+    width: 100%;
+`;
+
+const BodyContainer = styled.div`
+	max-width: 100%;
+	max-height: 100%;
+	height: calc(100% - 53px);
+	display: flex;
+`;
+
+const GridHalf = styled.div`
+	width: 50%;
+	@media (max-width: 1000px) {
+		width: 45%;
+	}
+	@media (max-width: 920px) {
+		width: 410px;
+	}
+	@media (max-width: 650px) {
+		width: 40%;
+      	min-width: 360px;
+	}	
+`;
+
+const GridHalfRail = styled.div`
+	height: 100%;
+	width: 480px;
+	margin: 0 auto;
+	@media (max-width: 1000px) {
+		width: 400px;
+      	padding-top: 10px;
+	}
+	@media (max-width: 650px) {
+		width: 350px;
+	}	
+`;
+
+const CluesHalf = styled.div`
+	width: 50%;
+	@media (max-width: 1000px) {
+		width: 55%;
+	}
+	@media (max-width: 920px) {
+		max-width: 450px;
+		margin-left: 20px;
+	}
+	@media (max-width: 650px) {
+		width: 60%;
+      	margin-left: 10px;
+	}	
+`;
 
 export default Create;

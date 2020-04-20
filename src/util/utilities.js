@@ -159,6 +159,13 @@ export const makeLabels = (clues) => {
 // for state arrays like correct, revealed, noted cells
 export const isCellInGroup = (cellGroup, cellToFind) => !!cellGroup.find(cell => cellToFind === cell);
 
+export const removeArrayItem = (array, item) => {
+	const idx = array.indexOf(item);
+	if (idx > -1) {
+		array.splice(idx, 1);
+	}
+}
+
 // return false if any squares have more than one letter
 export const isRebus = (grid) => grid.some(square => square.length > 1);
 

@@ -1,3 +1,6 @@
+/* 
+REPLACED WITH STYLED COMPONENTS
+
 .ClueBanner {
 	width: 100%;
 	background-color: #dceffe;
@@ -19,8 +22,23 @@
 .ClueBanner-text {
 	font-size: 16px;
 	padding: 5px;
+	flex: 1;
+}
+
+.ClueBanner-text-input {
+	background-color: transparent;
+	border: none;
+	font-size: 14px;
+	height: 18px;
+	width: 100%;
+	display: block;
+	resize: none;
+}
+
+.ClueBanner-text-input:focus {
+	outline: none;
 }
 
 .italic {
 	font-style: italic;
-}
+} */

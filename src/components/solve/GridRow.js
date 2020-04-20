@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import './styles/GridRow.css';
-
+import styled from 'styled-components';
+// import './styles/GridRow.css';
 import GridCell from './GridCell';
 
 class GridRow extends Component {
@@ -19,6 +19,7 @@ class GridRow extends Component {
 		return label ? label[1] : "";
 	}
 
+	// specific update conditions to avoid unnecessary renders
 	shouldComponentUpdate(nextProps) {
 		return JSON.stringify(nextProps.gridRow)         !== JSON.stringify(this.props.gridRow)
 			|| JSON.stringify(nextProps.activeClueCells) !== JSON.stringify(this.props.activeClueCells)
@@ -33,11 +34,12 @@ class GridRow extends Component {
 
 	render() {
 		return (
-			<div className={"GridRow " + (this.props.isSunday ? "GridRow-sunday" : "")}>
+			<StyledGridRow isSunday={this.props.isSunday}>
 				{[...Array(this.props.gridRow.length)].map((num, i) => 
-					<div className={"GridCellContainer " + (this.props.isSunday ? "GridCellContainer-sunday" : "")}
-						 key={[this.props.rowNumber, i]}
-						 onClick={e => this.props.handleCellClick(e, this.props.rowNumber * this.props.rowLength + i)} >
+					<GridCellContainer 
+						key={[this.props.rowNumber, i]}
+						isSunday={this.props.isSunday}
+						onClick={e => this.props.handleCellClick(e, this.props.rowNumber * this.props.rowLength + i)} >
 						<GridCell 
 							active={this.isActiveCell(i)}
 							activeClue={this.isRelevantCell(this.props.activeClueCells, i, this.props.rowLength)}
@@ -48,11 +50,34 @@ class GridRow extends Component {
 							label={this.getCellLabel(i, this.props.rowLength)} 
 							isSunday={this.props.isSunday}
 							char={this.props.gridRow[i]} />
-					</div>
+					</GridCellContainer>
 				)}
-			</div>
+			</StyledGridRow>
 		);
 	}
 }
+
+const StyledGridRow = styled.div`
+	display: flex;
+	width: 100%;
+	height: ${props => props.isSunday ? "4.7619%": "6.666667%"};
+	&:last-child {
+		border-bottom: 1px solid #383838;
+		height: ${props => props.isSunday ? "calc(4.7619% + 1px)" : "calc(6.666667% + 1px)"};
+	}
+`;
+
+const GridCellContainer = styled.div`
+	height: 100%;
+	border-top: 1px solid #383838;
+	border-left: 1px solid #383838;
+	width: ${props => props.isSunday ? "4.7619%" : "6.666667%"};
+	&:nth-child(15n) {
+		border-right: ${props => props.isSunday ? "none" : "1px solid #383838"};
+	}
+	&:nth-child(21n) {
+		border-right: ${props => props.isSunday ? "1px solid #383838" : "none"};
+	}
+`;
 
 export default GridRow;

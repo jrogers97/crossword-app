@@ -6,9 +6,9 @@
 	align-items: center;
 } */
 
-.NavBar button:focus {
+/* .NavBar button:focus {
 	outline: none;
-}
+} */
 
 .NavBar-NewPuzzle {
 	font-size: 14px;
@@ -34,21 +34,6 @@
 	box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
 	transition: all 100ms ease-in-out;
 }
-
-/* .NavBar-Menu {
-	border: none;
-	margin: 0 20px;
-}
-
-.NavBar-Menu:hover {
-	cursor: pointer;
-}
-
-.NavBar-MenuIcon {
-	height: 20px;
-	width: 20px;
-	border: none;
-} */
 
 .NavBar-Days, .NavBar-Check, .NavBar-Reveal, .NavBar-Clear {
 	height: 100%;
@@ -159,10 +144,14 @@
 	filter: invert(1);
 }
 
+button:focus {
+	outline: none;
+}
+
 @media (max-width: 700px) {
-	.NavBar {
+	/* .NavBar {
 		font-size: 13px;
-	}
+	} */
 		
 	.NavBar-NewPuzzle {
 		font-size: 13px;
