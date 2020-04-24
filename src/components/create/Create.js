@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import smoothscroll from 'smoothscroll-polyfill';
 import ClipLoader from 'react-spinners/ClipLoader';
 // import '../create/styles/Create.css';
@@ -10,6 +10,8 @@ import {NavWrapper} from '../common/NavWrapper';
 import Grid from '../solve/Grid';
 import Clues from '../solve/Clues';
 import ClueBanner from '../solve/ClueBanner';
+import CreateModal from './CreateModal';
+import PuzzleHeader from './PuzzleHeader';
 
 class Create extends Component {
 	constructor(props) {
@@ -29,7 +31,10 @@ class Create extends Component {
             notesMode: false,
 			labels: [],
 			loading: true,
-			finished: false
+			finished: false,
+			saveModalOpen: false,
+			loadModalOpen: false,
+			puzzleName: null
         }
         
 		this.handleCellClick        = this.handleCellClick.bind(this);
@@ -39,13 +44,16 @@ class Create extends Component {
         this.handleBlankClick       = this.handleBlankClick.bind(this);
 		this.handleNotesClick       = this.handleNotesClick.bind(this);
 		this.handleSaveClick        = this.handleSaveClick.bind(this);
+		this.handleLoadClick        = this.handleLoadClick.bind(this);
 		this.saveState				= this.saveState.bind(this);
+		this.handleModalClose	 	= this.handleModalClose.bind(this);
+		this.handleModalSaveClick	= this.handleModalSaveClick.bind(this);
 	}
 
 	componentDidMount() {
         var self = this;
         this.props.changeActivePage("create");
-		setTimeout(function() {
+		this.timeout = setTimeout(function() {
 			const createState = JSON.parse(localStorage.getItem('createState'));
 			if (createState && createState.finishedGrid && createState.finishedGrid.length) {
 				console.log(createState);
@@ -53,14 +61,14 @@ class Create extends Component {
 			} else {
 				self.setupPuzzle()
 			}
-		}, 800);
+		}, 10);
 
 		document.addEventListener("keydown", this.handleKeyDown);
 		smoothscroll.polyfill();
 	}
 
 	componentWillUnmount() {
-		this.saveState();
+		document.removeEventListener("keydown", this.handleKeyDown);
 	}
 
 	setupPuzzle() {
@@ -91,7 +99,7 @@ class Create extends Component {
 
 	handleKeyDown(e) {
 		console.log(document.activeElement.tagName);
-		if (this.state.loading || document.activeElement.tagName === "TEXTAREA") {
+		if (this.state.loading || this.state.loadModalOpen || this.state.saveModalOpen || document.activeElement.tagName === "TEXTAREA") {
 			return;
 		}
 
@@ -130,7 +138,7 @@ class Create extends Component {
 			if (e.keyCode === 38) {
 				if (this.state.isAcross) {
 					this.setState({
-					activeClueCells: activeClueCellsDown,
+						activeClueCells: activeClueCellsDown,
 						activeClue: activeClueDown,
 						altDirectionActiveClue: activeClueAcross,
 						isAcross: false
@@ -297,11 +305,26 @@ class Create extends Component {
 	}
 
 	handleSaveClick(e) {
-		console.log('save puzzle');
+		this.setState({saveModalOpen: true});
+	}
+
+	handleModalSaveClick(name) {
+		this.setState({
+			puzzleName: name,
+			loadModalOpen: false,
+			saveModalOpen: false
+		});
 	}
 
 	handleLoadClick(e) {
-		console.log('load puzzle');
+		this.setState({loadModalOpen: true});
+	}
+
+	handleModalClose(e) {
+		this.setState({
+			saveModalOpen: false,
+			loadModalOpen: false
+		});
 	}
 
 	moveToNextCell(isAcross, ignoreUnfinishedClues, wasEmptyCell) {
@@ -437,6 +460,7 @@ class Create extends Component {
 			(<BodyContainer>
 		    	<GridHalf>
 					<GridHalfRail>
+						<PuzzleHeader puzzleName={this.state.puzzleName} handleEditClick={this.handleSaveClick} />
 						<ClueBanner 
 							mode="create"
 							label={Object.keys(this.state.activeClue)[0]}
@@ -467,18 +491,30 @@ class Create extends Component {
      		</BodyContainer>);
 
 		return (
-            <StyledCreate>
-                <NavContainer>
-                    <NavWrapper
-                        mode="create"
-                        toggleSidebarOpen={this.props.toggleSidebarOpen}
-                        handleClearClick={this.handleClearClick}
-                        handleBlankClick={this.handleBlankClick}
-                        handleSaveClick={this.handleSaveClick}
-                        handleLoadClick={this.handleLoadClick} />
-                </NavContainer>
-                {body}
-            </StyledCreate> 
+			<Fragment>
+				<StyledCreate blurred={this.state.saveModalOpen || this.state.loadModalOpen}>
+					<NavContainer>
+						<NavWrapper
+							mode="create"
+							toggleSidebarOpen={this.props.toggleSidebarOpen}
+							handleClearClick={this.handleClearClick}
+							handleBlankClick={this.handleBlankClick}
+							handleSaveClick={this.handleSaveClick}
+							handleLoadClick={this.handleLoadClick} />
+					</NavContainer>
+					{body}
+				</StyledCreate> 
+
+				{(this.state.saveModalOpen || this.state.loadModalOpen) && 
+					<CreateModal 
+						saveModalOpen={this.state.saveModalOpen}
+						loadModalOpen={this.state.loadModalOpen}
+						handleModalClose={this.handleModalClose}
+						handleModalSaveClick={this.handleModalSaveClick}
+						puzzleName={this.state.puzzleName} />
+				}
+					
+			</Fragment>
 		);
 	}
 }
@@ -488,8 +524,8 @@ const StyledCreate = styled.div`
 	max-height: 100vh;
 	height: 100vh;
 	width: 100vw;
-	filter: blur(0);
 	transition: filter 300ms ease-in-out;
+	filter: ${props => props.blurred ? "blur(3px)" : "blur(0)"};
 `;
 
 const LoaderContainer = styled.div`

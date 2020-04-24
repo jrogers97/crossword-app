@@ -56,6 +56,7 @@ class Solve extends Component {
 		this.handleRevealClick      = this.handleRevealClick.bind(this);
 		this.handleClearClick       = this.handleClearClick.bind(this);
 		this.handleTimerPause	    = this.handleTimerPause.bind(this);
+		this.handleTimerUpdate	    = this.handleTimerUpdate.bind(this);
 		this.handleCheckboxChange   = this.handleCheckboxChange.bind(this);
 		this.handleNotesClick       = this.handleNotesClick.bind(this);
 		this.handleModalButtonClick = this.handleModalButtonClick.bind(this);
@@ -72,20 +73,23 @@ class Solve extends Component {
 				delete storedState.ignoredDays;
 				delete storedState.notesMode;
 				storedState.progressSaved = true;
+				storedState.paused = true;
+			
+				console.log('recalling state ', storedState.timerValue);
 				console.log(storedState);
 				self.setState(storedState);
 			} else {
 				self.setupPuzzle()
 			}
-		}, 1000);
+		}, 0);
 
 		document.addEventListener("keydown", this.handleKeyDown);
 		smoothscroll.polyfill();
 	}
 
-	// componentWillUnmount() {
-	// 	this.saveState();
-	// }
+	componentWillUnmount() {
+		document.removeEventListener("keydown", this.handleKeyDown);
+	}
 
 	setupPuzzle() {
 		var self = this;
@@ -143,8 +147,8 @@ class Solve extends Component {
 
 	// save state to local storage
 	saveState() {
+		console.log('saving state ', this.state.timerValue);
 		if (!this.state.progressSaved) {
-			console.log('saving state');
 			localStorage.setItem('solveState', JSON.stringify(this.state));
 			this.setState({progressSaved: true});
 		}
@@ -152,13 +156,11 @@ class Solve extends Component {
 
 	handleKeyDown(e) {
 		if (this.state.loading || this.state.paused || !this.state.hasStarted) {
-			console.log('return solve');
 			return;
 		}
 
 		// ignore meta keys
 		if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-			console.log('prevent default solve');
 			e.preventDefault();
 	    }
 
@@ -235,6 +237,7 @@ class Solve extends Component {
 		if (e.keyCode === 8) {
 			// delete if active cell isn't already marked correct
 			this.moveToPrevCell(this.state.isAcross, !utils.isCellInGroup(this.state.correctCells, this.state.activeCell));
+			this.setState({progressSaved: false});
 		}
 	}
 
@@ -450,6 +453,7 @@ class Solve extends Component {
 			revealedCells: [],
 			correctCells: [],
 			incorrectCells: [],
+			greyedClues: [],
 			shouldCheckFinishedGrid: true
 		});
 	}
@@ -458,8 +462,13 @@ class Solve extends Component {
 		this.setState({notesMode: !this.state.notesMode});
 	}
 
-	handleTimerPause(timerValue) {
-		this.setState({paused: true, timerValue: timerValue});
+	handleTimerPause() {
+		this.setState({paused: true});
+	}
+
+	handleTimerUpdate(timerValue) {
+		console.log('timer update: ', timerValue);
+		this.setState({timerValue: timerValue});
 	}
 
 	// for days difficulty dropdown
@@ -687,21 +696,21 @@ class Solve extends Component {
 							mode="solve"
 							toggleSidebarOpen={this.props.toggleSidebarOpen}
 							handleTimerPause={this.handleTimerPause}
+							handleTimerUpdate={this.handleTimerUpdate}
 							handleNewPuzzleClick={this.handleNewPuzzleClick} 
 							handleCheckClick={this.handleCheckClick}
 							handleRevealClick={this.handleRevealClick}
 							handleClearClick={this.handleClearClick}
 							handleNotesClick={this.handleNotesClick}
 							handleSaveClick={this.saveState}
-							notesActive={this.notesMode}
+							notesMode={this.notesMode}
 							onCheckboxChange={this.handleCheckboxChange}
 							progressSaved={this.state.progressSaved}
 							timerValue={this.state.timerValue}
 							hasStarted={this.state.hasStarted}
-							loading={this.state.loading}
+							finished={this.state.finished}
 							paused={this.state.paused}
-							correct={this.state.correct}
-							finished={this.state.finished} />
+							correct={this.state.correct} />
 					</NavContainer>
 					{body}
 			    </StyledSolve> 

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import Timer from './Timer';
 // import './styles/SolveNav.css';
 import styled from 'styled-components';
@@ -6,49 +6,229 @@ import notesIcon from '../../icon/pencil.svg';
 import checkIcon from '../../icon/check.svg';
 import saveIcon from '../../icon/save.svg';
 
-class SolveNav extends Component {
-	constructor(props) {
-		super(props);
+// class SolveNav extends Component {
+// 	constructor(props) {
+// 		super(props);
 
-		this.state = {
-			activeDropdown: "",
-			notesActive: this.props.notesActive
-		};
+// 		this.state = {
+// 			activeDropdown: "",
+// 			notesActive: this.props.notesActive
+// 		};
 
-		this.handleNavButtonClick = this.handleNavButtonClick.bind(this);
-	}
+// 		this.handleNavButtonClick = this.handleNavButtonClick.bind(this);
+// 		this.closeDropdowns = this.closeDropdowns.bind(this);
+// 	}
 
-	componentDidMount() {
-		this.daysDropdown = document.querySelector("#days-dropdown");
-		this.checkDropdown = document.querySelector("#check-dropdown");
-		this.revealDropdown = document.querySelector("#reveal-dropdown");
+// 	componentDidMount() {
+// 		this.daysDropdown = document.querySelector("#days-dropdown");
+// 		this.checkDropdown = document.querySelector("#check-dropdown");
+// 		this.revealDropdown = document.querySelector("#reveal-dropdown");
 		
-		this.daysButton = document.querySelector("#days-button");
-		this.checkButton = document.querySelector("#check-button");
-		this.revealButton = document.querySelector("#reveal-button");
-		this.notesButton = document.querySelector("#notes-button");
+// 		this.daysButton = document.querySelector("#days-button");
+// 		this.checkButton = document.querySelector("#check-button");
+// 		this.revealButton = document.querySelector("#reveal-button");
+// 		this.notesButton = document.querySelector("#notes-button");
 
-		this.setDropdownPositions();
+// 		this.setDropdownPositions();
 
-		// close dropdown for outside clicks
-		window.addEventListener("click", e => {
-			const target = e.target.id;
-			if (target !== "check-button" 
-				&& target !== "reveal-button" 
-				&& target !== "days-button"
-				&& !e.target.className.includes("days-dropdown")) {
-				this.setState({activeDropdown: ""});
-			}
-		});
+// 		// close dropdown for outside clicks
+// 		window.addEventListener("click", this.closeDropdowns);
 
-		var resizeId;
-		window.addEventListener('resize', () => {
-			clearTimeout(resizeId);
-			resizeId = setTimeout(this.setDropdownPositions.bind(this), 500);
-		});
-	}
+// 		var resizeId;
+// 		window.addEventListener('resize', () => {
+// 			clearTimeout(resizeId);
+// 			resizeId = setTimeout(this.setDropdownPositions.bind(this), 500);
+// 		});
+// 	}
 
-	handleNavButtonClick(e) {
+// 	componentWillUnmount() {
+// 		window.removeEventListener("click", this.closeDropdowns);
+// 	}
+
+// 	handleNavButtonClick(e) {
+// 		const daysClicked = e.target.id === "days-button";
+// 		const checkClicked = e.target.id === "check-button";
+// 		const revealClicked = e.target.id === "reveal-button";
+// 		const notesClicked = e.target.id === "notes-button" || e.target.id === "notes-icon" || e.target.id === "notes-text";
+
+// 		let newActiveDropdown;
+// 		if (daysClicked) {
+// 			newActiveDropdown = this.state.activeDropdown === "days" ? "" : "days";
+// 		} else if (checkClicked) {
+// 			newActiveDropdown = this.state.activeDropdown === "check" ? "" : "check";
+// 		} else if (revealClicked) {
+// 			newActiveDropdown = this.state.activeDropdown === "reveal" ? "" : "reveal";
+// 		}
+
+// 		this.setState({
+// 			activeDropdown: newActiveDropdown,
+// 			notesActive: notesClicked ? !this.state.notesActive : this.state.notesActive
+// 		});
+// 	}
+
+// 	setDropdownPositions() {
+// 		const dropdownEls = [
+// 			[this.daysDropdown, this.daysButton], 
+// 			[this.checkDropdown, this.checkButton], 
+// 			[this.revealDropdown, this.revealButton]
+// 		];
+
+// 		// position dropdown below its relevant button
+// 		dropdownEls.forEach(([dropdown, button]) => {
+// 			dropdown.style.top = `${button.offsetTop + button.offsetHeight + 1}px`;
+// 			dropdown.style.left = `${button.offsetLeft}px`;
+// 		});
+// 	}
+
+// 	closeDropdowns(e) {
+// 		const target = e.target.id;
+// 		if (target !== "check-button" 
+// 			&& target !== "reveal-button" 
+// 			&& target !== "days-button"
+// 			&& !e.target.className.includes("days-dropdown")) {
+// 			this.setState({activeDropdown: ""});
+// 		}
+// 	}
+
+// 	render() {
+// 		const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+// 		return (
+// 			<React.Fragment>
+// 				<NewPuzzleButton onClick={this.props.handleNewPuzzleClick}> New Puzzle </NewPuzzleButton>
+// 				<DaysButton 
+// 					id="days-button" 
+// 					isActive={activeDropdown === "days"}
+// 					onClick={this.handleNavButtonClick}> 
+// 					Difficulty 
+// 				</DaysButton>
+				
+// 				<RightButtons>
+// 					<Timer 
+// 						value={this.props.timerValue}
+// 						finished={this.props.finished}
+// 						correct={this.props.correct}
+// 						hasStarted={this.props.hasStarted}
+// 						loading={this.props.loading}
+// 						paused={this.props.paused} 
+// 						handleTimerPause={this.props.handleTimerPause} />
+						
+// 					<StyledButton onClick={this.props.handleClearClick}> Clear Puzzle </StyledButton>
+// 					<StyledButton 
+// 						id="reveal-button"
+// 						isActive={activeDropdown === "reveal"}
+// 						onClick={this.handleNavButtonClick}> 
+// 						Reveal 
+// 					</StyledButton>
+// 					<StyledButton 
+// 						id="check-button"
+// 						isActive={activeDropdown === "check"}
+// 						onClick={this.handleNavButtonClick}> 
+// 						Check 
+// 					</StyledButton>
+// 					<NotesButton 
+// 						id="notes-button" 
+// 						isActive={notesActive}
+// 						onClick={(e) => {
+// 							this.handleNavButtonClick(e);
+// 							this.props.handleNotesClick(e);
+// 						}}> 
+// 						<NotesIcon src={notesIcon} alt="Notes" id="notes-icon" isActive={notesActive} />
+// 						<NotesText id="notes-text" isActive={notesActive}> Notes </NotesText>
+// 					</NotesButton>
+// 					<SaveButton
+// 						id="save-button" 
+// 						saved={this.props.progressSaved}
+// 						onClick={(e) => {
+// 							this.props.handleSaveClick(e);
+// 						}}> 
+// 						<StyledButtonIcon src={this.props.progressSaved ? checkIcon : saveIcon} alt="Save Puzzle"/>
+// 						<StyledButtonText> {this.props.progressSaved ? "Saved" : "Save"} </StyledButtonText>
+// 					</SaveButton>
+// 				</RightButtons>
+
+// 				<DaysDropdown id="days-dropdown" isActive={activeDropdown === "days"}>
+// 					{days.map(day => {
+// 						return (
+// 							<DaysDropdownItem htmlFor={day} key={day} className="days-dropdown-item">
+// 								<input 
+// 									className="days-dropdown-checkbox"
+// 									type="checkbox" 
+// 									id={day} 
+// 									name={day} 
+// 									onChange={this.props.onCheckboxChange}
+// 									defaultChecked={true} />
+// 								<DaysDropdownText className="days-dropdown-text"> 
+// 									{day.charAt(0).toUpperCase() + day.slice(1)} 
+// 								</DaysDropdownText>
+// 							</DaysDropdownItem>
+// 						);
+// 					})}
+// 				</DaysDropdown>
+
+// 				<StyledDropdown id="reveal-dropdown" isActive={activeDropdown === "reveal"}>
+// 					<StyledDropdownItem onClick={() => this.props.handleRevealClick(0)}> Square </StyledDropdownItem>
+// 					<StyledDropdownItem onClick={() => this.props.handleRevealClick(1)}> Clue </StyledDropdownItem>
+// 					<StyledDropdownItem onClick={() => this.props.handleRevealClick(2)}> Puzzle </StyledDropdownItem>
+// 				</StyledDropdown>
+
+// 				<StyledDropdown id="check-dropdown" isActive={activeDropdown === "check"}>
+// 					<StyledDropdownItem onClick={() => this.props.handleCheckClick(0)}> Square </StyledDropdownItem>
+// 					<StyledDropdownItem onClick={() => this.props.handleCheckClick(1)}> Clue </StyledDropdownItem>
+// 					<StyledDropdownItem onClick={() => this.props.handleCheckClick(2)}> Puzzle </StyledDropdownItem>
+// 				</StyledDropdown>
+// 			</React.Fragment>
+// 		);
+// 	}
+// }
+
+const SolveNav = ({
+	handleTimerPause,
+	handleTimerUpdate,
+	handleNewPuzzleClick,
+	handleCheckClick,
+	handleRevealClick,
+	handleClearClick,
+	handleNotesClick,
+	handleSaveClick,
+	notesMode,
+	onCheckboxChange,
+	progressSaved,
+	timerValue,
+	hasStarted,
+	paused,
+	finished,
+	correct
+}) => {
+	const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+	const [activeDropdown, setActiveDropdown] = React.useState("");
+	const [notesActive, setNotesActive] = React.useState(notesMode);
+	let resizeId;
+
+	const daysDropdown = React.useRef(null);
+	const checkDropdown = React.useRef(null);
+	const revealDropdown = React.useRef(null);
+	
+	const daysButton = React.useRef(null);
+	const checkButton = React.useRef(null);
+	const revealButton = React.useRef(null);
+	const notesButton = React.useRef(null);
+
+	const closeDropdowns = (e) => {
+		const target = e.target.id;
+		if (target !== "check-button"
+			&& target !== "reveal-button" 
+			&& target !== "days-button"
+			&& !e.target.className.includes("days-dropdown")) {
+			setActiveDropdown("");
+		}
+	};
+
+	const handleResize = () => {
+		clearTimeout(resizeId);
+		resizeId = setTimeout(setDropdownPositions, 500);
+	};
+
+	const handleNavButtonClick = (e) => {
 		const daysClicked = e.target.id === "days-button";
 		const checkClicked = e.target.id === "check-button";
 		const revealClicked = e.target.id === "reveal-button";
@@ -56,24 +236,22 @@ class SolveNav extends Component {
 
 		let newActiveDropdown;
 		if (daysClicked) {
-			newActiveDropdown = this.state.activeDropdown === "days" ? "" : "days";
+			newActiveDropdown = activeDropdown === "days" ? "" : "days";
 		} else if (checkClicked) {
-			newActiveDropdown = this.state.activeDropdown === "check" ? "" : "check";
+			newActiveDropdown = activeDropdown === "check" ? "" : "check";
 		} else if (revealClicked) {
-			newActiveDropdown = this.state.activeDropdown === "reveal" ? "" : "reveal";
+			newActiveDropdown = activeDropdown === "reveal" ? "" : "reveal";
 		}
 
-		this.setState({
-			activeDropdown: newActiveDropdown,
-			notesActive: notesClicked ? !this.state.notesActive : this.state.notesActive
-		});
-	}
+		setActiveDropdown(newActiveDropdown);
+		setNotesActive(notesClicked ? !notesActive : notesActive);
+	};
 
-	setDropdownPositions() {
+	const setDropdownPositions = () => {
 		const dropdownEls = [
-			[this.daysDropdown, this.daysButton], 
-			[this.checkDropdown, this.checkButton], 
-			[this.revealDropdown, this.revealButton]
+			[daysDropdown.current, daysButton.current], 
+			[checkDropdown.current, checkButton.current], 
+			[revealDropdown.current, revealButton.current]
 		];
 
 		// position dropdown below its relevant button
@@ -81,100 +259,114 @@ class SolveNav extends Component {
 			dropdown.style.top = `${button.offsetTop + button.offsetHeight + 1}px`;
 			dropdown.style.left = `${button.offsetLeft}px`;
 		});
-	}
+	};
 
-	render() {
-		const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-		return (
-			<React.Fragment>
-				<NewPuzzleButton onClick={this.props.handleNewPuzzleClick}> New Puzzle </NewPuzzleButton>
-				<DaysButton 
-					id="days-button" 
-					isActive={this.state.activeDropdown === "days"}
-					onClick={this.handleNavButtonClick}> 
-					Difficulty 
-				</DaysButton>
-				
-				<RightButtons>
-					<Timer 
-						value={this.props.timerValue}
-						finished={this.props.finished}
-						correct={this.props.correct}
-						hasStarted={this.props.hasStarted}
-						loading={this.props.loaded}
-						paused={this.props.paused} 
-						handleTimerPause={this.props.handleTimerPause} />
-						
-					<StyledButton onClick={this.props.handleClearClick}> Clear Puzzle </StyledButton>
-					<StyledButton 
-						id="reveal-button"
-						isActive={this.state.activeDropdown === "reveal"}
-						onClick={this.handleNavButtonClick}> 
-						Reveal 
-					</StyledButton>
-					<StyledButton 
-						id="check-button"
-						isActive={this.state.activeDropdown === "check"}
-						onClick={this.handleNavButtonClick}> 
-						Check 
-					</StyledButton>
-					<NotesButton 
-						id="notes-button" 
-						isActive={this.state.notesActive}
-						onClick={(e) => {
-							this.handleNavButtonClick(e);
-							this.props.handleNotesClick(e);
-						}}> 
-						<NotesIcon src={notesIcon} alt="Notes" id="notes-icon" isActive={this.state.notesActive} />
-						<NotesText id="notes-text" isActive={this.state.notesActive}> Notes </NotesText>
-					</NotesButton>
-					<SaveButton
-						id="save-button" 
-						saved={this.props.progressSaved}
-						onClick={(e) => {
-							this.props.handleSaveClick(e);
-						}}> 
-						<StyledButtonIcon src={this.props.progressSaved ? checkIcon : saveIcon} alt="Save Puzzle"/>
-						<StyledButtonText> {this.props.progressSaved ? "Saved" : "Save"} </StyledButtonText>
-					</SaveButton>
-				</RightButtons>
+	React.useEffect(() => {
+		window.addEventListener("click", closeDropdowns);
+		window.addEventListener("resize", handleResize);
 
-				<DaysDropdown id="days-dropdown" isActive={this.state.activeDropdown === "days"}>
-					{days.map(day => {
-						return (
-							<DaysDropdownItem htmlFor={day} key={day} className="days-dropdown-item">
-								<input 
-									className="days-dropdown-checkbox"
-									type="checkbox" 
-									id={day} 
-									name={day} 
-									onChange={this.props.onCheckboxChange}
-									defaultChecked={true} />
-								<DaysDropdownText className="days-dropdown-text"> 
-									{day.charAt(0).toUpperCase() + day.slice(1)} 
-								</DaysDropdownText>
-							</DaysDropdownItem>
-						);
-					})}
-				</DaysDropdown>
+		setDropdownPositions();
 
-				<StyledDropdown id="reveal-dropdown" isActive={this.state.activeDropdown === "reveal"}>
-					<StyledDropdownItem onClick={() => this.props.handleRevealClick(0)}> Square </StyledDropdownItem>
-					<StyledDropdownItem onClick={() => this.props.handleRevealClick(1)}> Clue </StyledDropdownItem>
-					<StyledDropdownItem onClick={() => this.props.handleRevealClick(2)}> Puzzle </StyledDropdownItem>
-				</StyledDropdown>
+        // clean up
+        return () => {
+			window.removeEventListener("click", closeDropdowns);
+			window.removeEventListener("resize", handleResize);
+		}
+	}, []);
 
-				<StyledDropdown id="check-dropdown" isActive={this.state.activeDropdown === "check"}>
-					<StyledDropdownItem onClick={() => this.props.handleCheckClick(0)}> Square </StyledDropdownItem>
-					<StyledDropdownItem onClick={() => this.props.handleCheckClick(1)}> Clue </StyledDropdownItem>
-					<StyledDropdownItem onClick={() => this.props.handleCheckClick(2)}> Puzzle </StyledDropdownItem>
-				</StyledDropdown>
-			</React.Fragment>
-		);
-	}
-}
+	return (
+		<React.Fragment>
+			<NewPuzzleButton onClick={handleNewPuzzleClick}> New Puzzle </NewPuzzleButton>
+			<DaysButton 
+				id="days-button" 
+				isActive={activeDropdown === "days"}
+				onClick={handleNavButtonClick}
+				ref={daysButton}> 
+				Difficulty 
+			</DaysButton>
+			
+			<RightButtons>
+				<Timer 
+					value={timerValue}
+					correct={correct}
+					hasStarted={hasStarted}
+					paused={paused} 
+					finished={finished}
+					handleTimerPause={handleTimerPause}
+					handleTimerUpdate={handleTimerUpdate} />
+					
+				<StyledButton onClick={handleClearClick}> Clear Puzzle </StyledButton>
+				<StyledButton 
+					id="reveal-button"
+					isActive={activeDropdown === "reveal"}
+					onClick={handleNavButtonClick}
+					ref={revealButton}> 
+					Reveal 
+				</StyledButton>
+				<StyledButton 
+					id="check-button"
+					isActive={activeDropdown === "check"}
+					onClick={handleNavButtonClick}
+					ref={checkButton}> 
+					Check 
+				</StyledButton>
+				<NotesButton 
+					id="notes-button" 
+					isActive={notesActive}
+					ref={notesButton}
+					onClick={(e) => {
+						handleNavButtonClick(e);
+						handleNotesClick(e);
+					}}> 
+					<NotesIcon src={notesIcon} alt="Notes" id="notes-icon" isActive={notesActive} />
+					<NotesText id="notes-text" isActive={notesActive}> Notes </NotesText>
+				</NotesButton>
+				<SaveButton
+					id="save-button" 
+					saved={progressSaved}
+					onClick={(e) => {
+						handleSaveClick(e);
+					}}> 
+					<StyledButtonIcon src={progressSaved ? checkIcon : saveIcon} alt="Save Puzzle"/>
+					<StyledButtonText> {progressSaved ? "Saved" : "Save"} </StyledButtonText>
+				</SaveButton>
+			</RightButtons>
 
-const StyledButton = styled(({isActive, ...rest}) => <button {...rest} />)`
+			<DaysDropdown id="days-dropdown" isActive={activeDropdown === "days"} ref={daysDropdown}>
+				{days.map(day => {
+					return (
+						<DaysDropdownItem htmlFor={day} key={day} className="days-dropdown-item">
+							<input 
+								className="days-dropdown-checkbox"
+								type="checkbox" 
+								id={day} 
+								name={day} 
+								onChange={onCheckboxChange}
+								defaultChecked={true} />
+							<DaysDropdownText className="days-dropdown-text"> 
+								{day.charAt(0).toUpperCase() + day.slice(1)} 
+							</DaysDropdownText>
+						</DaysDropdownItem>
+					);
+				})}
+			</DaysDropdown>
+
+			<StyledDropdown id="reveal-dropdown" isActive={activeDropdown === "reveal"} ref={revealDropdown}>
+				<StyledDropdownItem onClick={() => handleRevealClick(0)}> Square </StyledDropdownItem>
+				<StyledDropdownItem onClick={() => handleRevealClick(1)}> Clue </StyledDropdownItem>
+				<StyledDropdownItem onClick={() => handleRevealClick(2)}> Puzzle </StyledDropdownItem>
+			</StyledDropdown>
+
+			<StyledDropdown id="check-dropdown" isActive={activeDropdown === "check"} ref={checkDropdown}>
+				<StyledDropdownItem onClick={() => handleCheckClick(0)}> Square </StyledDropdownItem>
+				<StyledDropdownItem onClick={() => handleCheckClick(1)}> Clue </StyledDropdownItem>
+				<StyledDropdownItem onClick={() => handleCheckClick(2)}> Puzzle </StyledDropdownItem>
+			</StyledDropdown>
+		</React.Fragment>
+	);
+};
+
+const StyledButton = styled.button`
 	height: 100%;
 	font-size: 14px;
 	border: none;
@@ -195,6 +387,11 @@ const StyledButton = styled(({isActive, ...rest}) => <button {...rest} />)`
 `;
 
 const StyledButtonSecondary = styled.button`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 51px;
 	border: none;
 	height: 100%;
 	padding: 1px 13px;
@@ -217,7 +414,7 @@ const StyledButtonText = styled.p`
 	text-align: center;
 `;
 
-const StyledDropdown = styled(({isActive, ...rest}) => <div {...rest} />)`
+const StyledDropdown = styled.div`
 	position: fixed;
 	flex-direction: column;
 	background-color: white;

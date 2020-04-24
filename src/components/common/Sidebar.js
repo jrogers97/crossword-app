@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Link} from 'react-router-dom';
 // import './styles/Sidebar.css';
 import styled from 'styled-components';
@@ -6,55 +6,114 @@ import notesIcon from '../../icon/pencil.svg';
 import plusIcon from '../../icon/plus.svg';
 import xIcon from '../../icon/x.svg';
 
-class Sidebar extends Component {
-    componentDidMount() {
-        window.addEventListener("click", (e) => {
-            if (this.props.open && this.shouldToggleSidebarOpen(e.target)) {
-                this.props.toggleSidebarOpen(e);
+// class Sidebar extends Component {
+//     constructor(props) {
+//         super(props);
+
+        // this.handleClick = this.handleClick.bind(this);
+    // }
+
+    // componentDidMount() {
+    //     window.addEventListener("click", this.handleClick);
+    // }
+
+    // componentWillUnmount() {
+    //     window.removeEventListener("click", this.handleClick);
+    // }
+
+    // handleClick(e) {
+    //     if (this.props.open && e.target.id !== "menu" && e.target.id !== "sidebar-container") {
+    //         this.props.toggleSidebarOpen(e);
+    //     }
+    // }
+
+    // isActive(name) {
+    //     return this.props.activePage === name;
+    // }
+
+//     render() {
+//         const pages = [
+//             ["/solve", "Solve", notesIcon, this.isActive("solve")], 
+//             ["/create", "Create", plusIcon, this.isActive("create")]
+//         ];
+
+//         return (
+//             <React.Fragment>
+//                 <SidebarContainer open={this.props.open} id="sidebar-container">
+//                     <SidebarClose onClick={this.props.toggleSidebarOpen}>
+//                         <SidebarCloseIcon src={xIcon} alt="Close"/>
+//                     </SidebarClose>
+
+//                     {pages.map(([path, name, icon, isActive]) => {
+//                         return (
+//                             <LinkItem 
+//                                 to={path} 
+//                                 key={name}
+//                                 isActive={isActive}
+//                                 onClick={() => this.props.changeActivePage(name.toLowerCase())}>
+//                                     <LinkItemActiveIndicator isActive={isActive}></LinkItemActiveIndicator> 
+//                                     <LinkItemIcon src={icon} alt={name} />
+//                                     <p> {name} </p>
+//                             </LinkItem>
+//                         )
+//                     })}
+//                 </SidebarContainer>
+
+//                 <Overlay open={this.props.open}></Overlay>
+//             </React.Fragment>
+//         );
+//     }
+// }
+
+const Sidebar = ({
+    open,
+    activePage,
+    toggleSidebarOpen,
+    changeActivePage
+}) => {
+    React.useEffect(() => {
+        const handler = (e) => {
+            if (open && e.target.id !== "menu" && e.target.id !== "sidebar-container") {
+                toggleSidebarOpen(e);
             }
-        });
-    }
+        };
 
-    isActive(name) {
-        return this.props.activePage === name;
-    }
+        window.addEventListener("click", handler);
 
-    shouldToggleSidebarOpen(targetEl) {
-        return targetEl.id !== "menu" && targetEl.id !== "sidebar-container"
-    } 
+        // clean up
+        return () => window.removeEventListener("click", handler);
+    }, [open]);
 
-    render() {
-        const pages = [
-            ["/solve", "Solve", notesIcon, this.isActive("solve")], 
-            ["/create", "Create", plusIcon, this.isActive("create")]
-        ];
+    const pages = [
+        ["/solve", "Solve", notesIcon, activePage === "solve"], 
+        ["/create", "Create", plusIcon, activePage === "create"]
+    ];
 
-        return (
-            <React.Fragment>
-                <SidebarContainer open={this.props.open} id="sidebar-container">
-                    <SidebarClose onClick={this.props.toggleSidebarOpen}>
-                        <SidebarCloseIcon src={xIcon} alt="Close"/>
-                    </SidebarClose>
+    return (
+        <React.Fragment>
+            <SidebarContainer open={open} id="sidebar-container">
+                <SidebarClose onClick={toggleSidebarOpen}>
+                    <SidebarCloseIcon src={xIcon} alt="Close"/>
+                </SidebarClose>
 
-                    {pages.map(([path, name, icon, isActive]) => {
-                        return (
-                            <LinkItem 
-                                to={path} 
-                                key={name}
-                                isActive={isActive}
-                                onClick={() => this.props.changeActivePage(name.toLowerCase())}>
-                                    <LinkItemActiveIndicator isActive={isActive}></LinkItemActiveIndicator> 
-                                    <LinkItemIcon src={icon} alt={name} />
-                                    <p> {name} </p>
-                            </LinkItem>
-                        )
-                    })}
-                </SidebarContainer>
+                {pages.map(([path, name, icon, isActive]) => {
+                    return (
+                        <LinkItem 
+                            to={path} 
+                            key={name}
+                            isActive={isActive}
+                            onClick={() => changeActivePage(name.toLowerCase())}>
+                                <LinkItemActiveIndicator isActive={isActive}></LinkItemActiveIndicator> 
+                                <LinkItemIcon src={icon} alt={name} />
+                                <p> {name} </p>
+                        </LinkItem>
+                    )
+                })}
+            </SidebarContainer>
 
-                <Overlay open={this.props.open}></Overlay>
-            </React.Fragment>
-        );
-    }
+            <Overlay open={open}></Overlay>
+        </React.Fragment>
+    );
 }
 
 const SidebarContainer = styled.div`

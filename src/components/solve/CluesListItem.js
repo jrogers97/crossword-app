@@ -65,7 +65,6 @@ const ClueText = styled.span`
 	font-style: ${props => props.clueText.includes("*") ? "italic" : "normal"};
 `;
 
-// manually filter out 'isActive' prop so we don't pass to DOM
 const ClueTextInput = styled(({isActive, ...rest}) => <TextareaAutosize {...rest}/>)`
 	background-color: transparent;
 	border: none;

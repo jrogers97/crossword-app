@@ -1,60 +1,69 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 // import './styles/GridRow.css';
 import GridCell from './GridCell';
 
-class GridRow extends Component {
-
-	isActiveCell(col) {
-		return (this.props.rowNumber === Math.floor(this.props.activeCell / this.props.rowLength)) 
-			&& (col === this.props.activeCell % this.props.rowLength);
-	}
-
-	isRelevantCell(cells, col, rowLength) {
-		return cells.some(cell => Math.floor(cell / rowLength) === this.props.rowNumber && cell % rowLength === col);
-	}
-
-	getCellLabel(col, rowLength) {
-		const label = this.props.gridRowLabels.find(label => label[0] % rowLength === col);
-		return label ? label[1] : "";
-	}
-
 	// specific update conditions to avoid unnecessary renders
-	shouldComponentUpdate(nextProps) {
-		return JSON.stringify(nextProps.gridRow)         !== JSON.stringify(this.props.gridRow)
-			|| JSON.stringify(nextProps.activeClueCells) !== JSON.stringify(this.props.activeClueCells)
-			|| JSON.stringify(nextProps.incorrectCells)  !== JSON.stringify(this.props.incorrectCells)
-			|| JSON.stringify(nextProps.correctCells)    !== JSON.stringify(this.props.correctCells)
-			|| JSON.stringify(nextProps.revealedCells)   !== JSON.stringify(this.props.revealedCells)
-			|| JSON.stringify(nextProps.noteCells)       !== JSON.stringify(this.props.noteCells)
-			|| JSON.stringify(nextProps.gridRowLabels)   !== JSON.stringify(this.props.gridRowLabels)
-			|| (Math.floor(nextProps.activeCell / nextProps.rowLength) === nextProps.rowNumber 
-			|| Math.floor(this.props.activeCell / this.props.rowLength) === this.props.rowNumber);
-	}
+// 	shouldComponentUpdate(nextProps) {
+// 		return JSON.stringify(nextProps.gridRow)         !== JSON.stringify(this.props.gridRow)
+// 			|| JSON.stringify(nextProps.activeClueCells) !== JSON.stringify(this.props.activeClueCells)
+// 			|| JSON.stringify(nextProps.incorrectCells)  !== JSON.stringify(this.props.incorrectCells)
+// 			|| JSON.stringify(nextProps.correctCells)    !== JSON.stringify(this.props.correctCells)
+// 			|| JSON.stringify(nextProps.revealedCells)   !== JSON.stringify(this.props.revealedCells)
+// 			|| JSON.stringify(nextProps.noteCells)       !== JSON.stringify(this.props.noteCells)
+// 			|| JSON.stringify(nextProps.gridRowLabels)   !== JSON.stringify(this.props.gridRowLabels)
+// 			|| (Math.floor(nextProps.activeCell / nextProps.rowLength) === nextProps.rowNumber 
+// 			|| Math.floor(this.props.activeCell / this.props.rowLength) === this.props.rowNumber);
+// 	}
 
-	render() {
-		return (
-			<StyledGridRow isSunday={this.props.isSunday}>
-				{[...Array(this.props.gridRow.length)].map((num, i) => 
-					<GridCellContainer 
-						key={[this.props.rowNumber, i]}
-						isSunday={this.props.isSunday}
-						onClick={e => this.props.handleCellClick(e, this.props.rowNumber * this.props.rowLength + i)} >
-						<GridCell 
-							active={this.isActiveCell(i)}
-							activeClue={this.isRelevantCell(this.props.activeClueCells, i, this.props.rowLength)}
-							correct={this.isRelevantCell(this.props.correctCells, i, this.props.rowLength)}
-							incorrect={this.isRelevantCell(this.props.incorrectCells, i, this.props.rowLength)}
-							revealed={this.isRelevantCell(this.props.revealedCells, i, this.props.rowLength)}
-							note={this.isRelevantCell(this.props.noteCells, i, this.props.rowLength)}
-							label={this.getCellLabel(i, this.props.rowLength)} 
-							isSunday={this.props.isSunday}
-							char={this.props.gridRow[i]} />
-					</GridCellContainer>
-				)}
-			</StyledGridRow>
-		);
-	}
+const GridRow = ({
+	rowNumber,
+	gridRow,
+	gridRowLabels,
+	rowLength,
+	isSunday,
+	activeCell,
+	activeClueCells,
+	correctCells,
+	incorrectCells,
+	revealedCells,
+	noteCells,
+	handleCellClick
+}) => {
+	return (
+		<StyledGridRow isSunday={isSunday}>
+			{[...Array(gridRow.length)].map((num, i) => 
+				<GridCellContainer 
+					key={[rowNumber, i]}
+					isSunday={isSunday}
+					onClick={e => handleCellClick(e, rowNumber * rowLength + i)} >
+					<GridCell 
+						active={isActiveCell(i, rowNumber, activeCell, rowLength)}
+						activeClue={isRelevantCell(activeClueCells, i, rowNumber, rowLength)}
+						correct={isRelevantCell(correctCells, i, rowNumber, rowLength)}
+						incorrect={isRelevantCell(incorrectCells, i, rowNumber, rowLength)}
+						revealed={isRelevantCell(revealedCells, i, rowNumber, rowLength)}
+						note={isRelevantCell(noteCells, i, rowNumber, rowLength)}
+						label={getCellLabel(i, rowLength, gridRowLabels)} 
+						isSunday={isSunday}
+						char={gridRow[i]} />
+				</GridCellContainer>
+			)}
+		</StyledGridRow>
+	)
+}
+
+const isActiveCell = (col, row, activeCell, rowLength) => {
+	return (row === Math.floor(activeCell / rowLength)) && (col === activeCell % rowLength);
+}
+
+const isRelevantCell = (cells, col, row, rowLength) => {
+	return cells.some(cell => Math.floor(cell / rowLength) === row && cell % rowLength === col);
+}
+
+const getCellLabel = (col, rowLength, labels) => {
+	const label = labels.find(label => label[0] % rowLength === col);
+	return label ? label[1] : "";
 }
 
 const StyledGridRow = styled.div`

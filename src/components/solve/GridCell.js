@@ -11,7 +11,8 @@ const GridCell = React.memo(({ active, activeClue, correct, incorrect, revealed,
 
 			<SpecialCellMarker
 				revealed={revealed}
-				incorrect={incorrect}>
+				incorrect={incorrect}
+				isSunday={isSunday}>
 			</SpecialCellMarker>
 
 			<GridCellLabel isSunday={isSunday}> 
@@ -56,31 +57,37 @@ const SpecialCellMarker = styled.span`
 			height: 0;
 			width: 0;
 			top: 0;
-			left: 21px;
-			border-top: 5px solid #E63333;
-			border-right: 5px solid #E63333;
-			border-bottom: 5px solid transparent;
-			border-left: 5px solid transparent;
+			left: ${props.isSunday ? "14px" : "21px"};
+			border-top: ${props.isSunday ? "4px solid #E63333" : "5px solid #E63333"};
+			border-right: ${props.isSunday ? "4px solid #E63333" : "5px solid #E63333"};
+			border-bottom: ${props.isSunday ? "4px solid transparent" : "5px solid transparent"};
+			border-left: ${props.isSunday ? "4px solid transparent" : "5px solid transparent"};
+			@media (max-width: 1000px) {
+				left: ${props.isSunday ? "10px" : "16px"};
+			}
+			@media (max-width: 650px) {
+				left: ${props.isSunday ? "8px" : "13px"};
+			}
 		`};
 	${props => props.incorrect &&
 		css`
 			height: 2px;
-			width: 45px;
-			top: 14px;
-			left: -7px;
+			width: ${props.isSunday ? "30px" : "45px"};
+			top: ${props.isSunday ? "11px" : "14px"};
+			left: ${props.isSunday ? "-5px" : "-7px"};
 			background-color: #E63333;
-			transform: rotate(-45deg)
+			transform: rotate(-45deg);
+			@media (max-width: 1000px) {
+				width: ${props.isSunday ? "25px" : "37px"};
+				left: ${props.isSunday ? "-3px" : "-5px"};
+				top: ${props.isSunday ? "8px" : "12px"};
+			}
+			@media (max-width: 650px) {
+				width: ${props.isSunday ? "21px" : "32px"};
+				left: ${props.isSunday ? "-2px" : "-5px"};
+				top: ${props.isSunday ? "7px" : "11px"};
+			}
 		`};
-	@media (max-width: 1000px) {
-		width: ${props => props.revealed ? "" : "37px"};
-		left: ${props => props.revealed ? "16px" : "-5px"};
-		top: ${props => props.revealed ? "" : "12px"};
-	}
-	@media (max-width: 650px) {
-		width: ${props => props.revealed ? "" : "32px"};
-		left: ${props => props.revealed ? "13px" : "-5px"};
-		top: ${props => props.revealed ? "" : "11px"};
-	}
 `;
 
 const GridCellLabel = styled.span`
