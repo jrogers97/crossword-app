@@ -2,7 +2,6 @@ import React from 'react';
 import {formatTime} from '../../util/utilities';
 import pauseIcon from '../../icon/pause.svg';
 import styled from 'styled-components';
-// import './styles/Timer.css';
 
 // class Timer extends Component {
 //     constructor(props) {

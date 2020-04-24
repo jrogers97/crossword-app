@@ -1,7 +1,6 @@
 import React from 'react';
 import {formatTime} from '../../util/utilities';
 import styled from 'styled-components';
-// import './styles/Modal.css';
 
 const getModalText = (hasStarted, paused, timerValue, finished, correct) => {
 	if (!hasStarted) {

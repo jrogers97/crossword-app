@@ -1,6 +1,5 @@
 import React from 'react';
 import Timer from './Timer';
-// import './styles/SolveNav.css';
 import styled from 'styled-components';
 import notesIcon from '../../icon/pencil.svg';
 import checkIcon from '../../icon/check.svg';

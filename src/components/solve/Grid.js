@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-// import './styles/Grid.css';
 import GridRow from './GridRow';
 
 const findRowsCells = (cells, row, rowLength) => cells.filter(cell => Math.floor(cell / rowLength) === row);

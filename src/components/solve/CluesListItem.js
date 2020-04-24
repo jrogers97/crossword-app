@@ -1,7 +1,6 @@
 import React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from 'styled-components';
-// import './styles/CluesListItem.css';
 
 const CluesListItem = React.memo(({clueNum, clueText, isActive, isAltDirectionActive, isGreyed, handleClueClick, handleClueInput, mode}) => {
 	return (

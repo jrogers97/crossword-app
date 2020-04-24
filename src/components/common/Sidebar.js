@@ -1,6 +1,5 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-// import './styles/Sidebar.css';
 import styled from 'styled-components';
 import notesIcon from '../../icon/pencil.svg';
 import plusIcon from '../../icon/plus.svg';

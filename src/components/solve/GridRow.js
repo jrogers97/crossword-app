@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-// import './styles/GridRow.css';
 import GridCell from './GridCell';
 
 	// specific update conditions to avoid unnecessary renders

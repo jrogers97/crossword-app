@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-// import './styles/PuzzleHeader.css';
 
 const makePuzzleTitle = (date) => {
 	if (!date) {

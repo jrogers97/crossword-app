@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import smoothscroll from 'smoothscroll-polyfill';
 import ClipLoader from 'react-spinners/ClipLoader';
-// import '../create/styles/Create.css';
 import styled from 'styled-components';
 import { buildCreateClues } from '../../util/data';
 import * as utils from '../../util/utilities';

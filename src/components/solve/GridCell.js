@@ -1,6 +1,5 @@
 import React from 'react';
 import styled, {css} from 'styled-components';
-// import './styles/GridCell.css';
 
 const GridCell = React.memo(({ active, activeClue, correct, incorrect, revealed, note, char, label, isSunday }) => {
 	return (

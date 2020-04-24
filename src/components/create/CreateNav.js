@@ -1,5 +1,4 @@
 import React from 'react';
-// import './styles/CreateNav.css';
 import styled from 'styled-components';
 import eraserIcon from '../../icon/eraser.svg';
 import saveIcon from '../../icon/save.svg';

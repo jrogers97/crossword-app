@@ -1,7 +1,6 @@
 import React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from 'styled-components';
-import './styles/ClueBanner.css';
 
 const getBannerText = clue => {
 	return clue.clue

@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-// import './styles/CluesListColumn.css';
 
 import CluesListItem from './CluesListItem';
 

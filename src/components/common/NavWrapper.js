@@ -1,7 +1,6 @@
 import React from 'react';
 import SolveNav from '../solve/SolveNav';
 import CreateNav from '../create/CreateNav';
-// import './styles/NavWrapper.css';
 import styled from 'styled-components';
 import menuIcon from '../../icon/menu.svg';
 

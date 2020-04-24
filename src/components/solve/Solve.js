@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import smoothscroll from 'smoothscroll-polyfill';
 import ClipLoader from 'react-spinners/ClipLoader';
-// import './styles/Solve.css';
 import styled from 'styled-components';
 import { fetchRandomData, makeFinishedGrid, makeClues } from '../../util/data';
 import * as utils from '../../util/utilities';
