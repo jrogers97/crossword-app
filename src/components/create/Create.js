@@ -2,13 +2,14 @@ import React, { Component, Fragment } from 'react';
 import smoothscroll from 'smoothscroll-polyfill';
 import ClipLoader from 'react-spinners/ClipLoader';
 import styled from 'styled-components';
-import { buildCreateClues } from '../../util/data';
 import * as utils from '../../util/utilities';
+import * as gridUtils from '../../util/gridutils';
+import * as clueUtils from '../../util/clueutils';
 
 import {NavWrapper} from '../common/NavWrapper';
-import Grid from '../solve/Grid';
-import Clues from '../solve/Clues';
-import ClueBanner from '../solve/ClueBanner';
+import Grid from '../common/grid/Grid';
+import Clues from '../common/clues/Clues';
+import ClueBanner from '../common/clues/ClueBanner';
 import CreateModal from './CreateModal';
 import PuzzleHeader from './PuzzleHeader';
 
@@ -24,29 +25,32 @@ class Create extends Component {
 			altDirectionActiveClue: null,
 			activeCell: null,
 			activeClueCells: null,
-			noteCells: [],
             isAcross: true,
             blankMode: false,
-            notesMode: false,
 			labels: [],
 			loading: true,
 			finished: false,
 			saveModalOpen: false,
 			loadModalOpen: false,
-			puzzleName: null
+			printModalOpen: false,
+			puzzleName: null,
+			puzzleSaved: false,
+			dateCreated: "",
+			savedPuzzles: {}
         }
-        
-		this.handleCellClick        = this.handleCellClick.bind(this);
-		this.handleClueClick        = this.handleClueClick.bind(this);
-		this.handleClueInput        = this.handleClueInput.bind(this);
-        this.handleKeyDown          = this.handleKeyDown.bind(this);
-        this.handleBlankClick       = this.handleBlankClick.bind(this);
-		this.handleNotesClick       = this.handleNotesClick.bind(this);
-		this.handleSaveClick        = this.handleSaveClick.bind(this);
-		this.handleLoadClick        = this.handleLoadClick.bind(this);
-		this.saveState				= this.saveState.bind(this);
-		this.handleModalClose	 	= this.handleModalClose.bind(this);
-		this.handleModalSaveClick	= this.handleModalSaveClick.bind(this);
+		
+		this.setupNewPuzzle			 = this.setupNewPuzzle.bind(this);
+		this.handleCellClick         = this.handleCellClick.bind(this);
+		this.handleClueClick         = this.handleClueClick.bind(this);
+		this.handleClueInput         = this.handleClueInput.bind(this);
+        this.handleKeyDown           = this.handleKeyDown.bind(this);
+        this.handleBlankClick        = this.handleBlankClick.bind(this);
+		this.handleSaveClick         = this.handleSaveClick.bind(this);
+		this.handleLoadClick         = this.handleLoadClick.bind(this);
+		this.handlePrintClick         = this.handlePrintClick.bind(this);
+		this.handlePuzzleDeleteClick = this.handlePuzzleDeleteClick.bind(this);
+		this.savePuzzle				 = this.savePuzzle.bind(this);
+		this.handleModalClose	 	 = this.handleModalClose.bind(this);
 	}
 
 	componentDidMount() {
@@ -54,13 +58,17 @@ class Create extends Component {
         this.props.changeActivePage("create");
 		this.timeout = setTimeout(function() {
 			const createState = JSON.parse(localStorage.getItem('createState'));
-			if (createState && createState.finishedGrid && createState.finishedGrid.length) {
+			if (createState) {
 				console.log(createState);
+				delete createState.blankMode;
 				self.setState(createState);
 			} else {
-				self.setupPuzzle()
+				self.setupNewPuzzle()
 			}
-		}, 10);
+			self.setState({
+				savedPuzzles: JSON.parse(localStorage.getItem('savedPuzzles')) || {}
+			});
+		}, 400);
 
 		document.addEventListener("keydown", this.handleKeyDown);
 		smoothscroll.polyfill();
@@ -70,35 +78,80 @@ class Create extends Component {
 		document.removeEventListener("keydown", this.handleKeyDown);
 	}
 
-	setupPuzzle() {
-        const rowLength = this.state.rowLength;
-        const grid = new Array(rowLength * rowLength).fill(null);
-        const clues = buildCreateClues(grid, rowLength);
-        const labels = utils.makeLabels(clues);
-
-        this.setState({
-            grid: grid,
-            clues: clues,
-            isAcross: true,
-            labels: labels,
-            activeClue: utils.findFirstActiveClues(true, clues),
-            altDirectionActiveClue: utils.findFirstActiveClues(false, clues),
-            activeCell: utils.findFirstActiveCells(grid, true, rowLength)[0],
-            activeClueCells: utils.findFirstActiveCells(grid, true, rowLength)[1],
-            notedCells: [],
-            loading: false,
-            finished: false
-        });
+	setupNewPuzzle() {
+		this.setState({loading: true}, () => {
+			setTimeout(() => {
+				const rowLength = this.state.rowLength;
+				const grid = new Array(rowLength * rowLength).fill(null);
+				const clues = clueUtils.buildCreateClues(grid, rowLength);
+				const labels = gridUtils.makeLabels(clues);
+	
+				this.setState({
+					grid: grid,
+					clues: clues,
+					isAcross: true,
+					labels: labels,
+					activeClue: clueUtils.findFirstActiveClues(true, clues),
+					altDirectionActiveClue: clueUtils.findFirstActiveClues(false, clues),
+					activeCell: gridUtils.findFirstActiveCells(grid, true, rowLength)[0],
+					activeClueCells: gridUtils.findFirstActiveCells(grid, true, rowLength)[1],
+					loading: false,
+					finished: false,
+					puzzleName: null,
+					puzzleSaved: false,
+					dateCreated: utils.formatDate(new Date())
+				});
+			}, 100);
+		});
 	}
 
 	// save state to local storage
-	saveState() {
-		localStorage.setItem('createState', JSON.stringify(this.state));
+	savePuzzle(name, oldName) {
+		this.setState({
+			puzzleName: name,
+			puzzleSaved: true,
+			saveModalOpen: false
+		}, () => {
+			let stateCopy = Object.assign({}, this.state);
+			// saved puzzles is tracked outside of individual puzzle's state
+			delete stateCopy["savedPuzzles"];
+			localStorage.setItem('createState', JSON.stringify(stateCopy));
+
+			let newSavedPuzzles = Object.assign({}, this.state.savedPuzzles);
+			// if puzzle is already saved under a different name, delete that version
+			if (oldName && this.state.savedPuzzles[oldName]) {
+				delete newSavedPuzzles[oldName];
+			}
+			// store puzzle state in object and set in local storage/state
+			newSavedPuzzles[name] = stateCopy;
+			this.refreshSavedPuzzles(newSavedPuzzles);
+		});
+	}
+
+	refreshSavedPuzzles(puzzles) {
+		localStorage.setItem('savedPuzzles', JSON.stringify(puzzles));
+		this.setState({savedPuzzles: puzzles});
+	}
+
+	loadPuzzle(name) {
+		this.setState({
+			loading: true,
+			loadModalOpen: false
+		}, () => {
+			setTimeout(() => {
+				const loadedPuzzle = this.state.savedPuzzles[name];
+				if (loadedPuzzle) {
+					localStorage.setItem('createState', JSON.stringify(loadedPuzzle));
+					this.setState(loadedPuzzle);
+				}
+			}, 200);
+		});
 	}
 
 	handleKeyDown(e) {
-		console.log(document.activeElement.tagName);
-		if (this.state.loading || this.state.loadModalOpen || this.state.saveModalOpen || document.activeElement.tagName === "TEXTAREA") {
+		if (this.state.loading || this.state.loadModalOpen 
+			|| this.state.saveModalOpen || this.state.printModalOpen 
+			|| document.activeElement.tagName === "TEXTAREA") {
 			return;
 		}
 
@@ -114,10 +167,10 @@ class Create extends Component {
 
 		if (e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40) {
 			// get possible new active clue/cells
-			const activeClueCellsAcross = utils.findActiveClueCells(this.state.activeCell, true, this.state.grid, this.state.rowLength);
-			const activeClueCellsDown = utils.findActiveClueCells(this.state.activeCell, false, this.state.grid, this.state.rowLength);
-			const activeClueAcross = utils.getActiveClueFromCell(activeClueCellsAcross[0], this.state.clues, true);
-			const activeClueDown = utils.getActiveClueFromCell(activeClueCellsDown[0], this.state.clues, false);
+			const activeClueCellsAcross = gridUtils.findActiveClueCells(this.state.activeCell, true, this.state.grid, this.state.rowLength);
+			const activeClueCellsDown = gridUtils.findActiveClueCells(this.state.activeCell, false, this.state.grid, this.state.rowLength);
+			const activeClueAcross = clueUtils.getActiveClueFromCell(activeClueCellsAcross[0], this.state.clues, true);
+			const activeClueDown = clueUtils.getActiveClueFromCell(activeClueCellsDown[0], this.state.clues, false);
 
 			// left arrow
 			if (e.keyCode === 37) {
@@ -190,24 +243,12 @@ class Create extends Component {
         let newGrid = this.state.grid.slice();
         newGrid[this.state.activeCell] = key.toUpperCase();
 
-        // if we're in notes mode, add active cell to noted cells
-        // if we're not and active cell is noted, remove from noted cells
-        let newNoteCells = this.state.noteCells.slice();
-        const shouldAddNote = this.state.notesMode && !utils.isCellInGroup(this.state.noteCells, this.state.activeCell);
-        const shouldDeleteNote = !this.state.notesMode && utils.isCellInGroup(this.state.noteCells, this.state.activeCell);
-
-        if (shouldAddNote) {
-            newNoteCells = [...newNoteCells, this.state.activeCell];
-        } else if (shouldDeleteNote) {
-            newNoteCells = newNoteCells.filter(cell => cell !== this.state.activeCell);
-        }
-
         this.setState({
             grid: newGrid,
-            noteCells: newNoteCells,
+			puzzleSaved: false
         });
         
-        if (utils.isGridComplete(newGrid)) {
+        if (gridUtils.isGridComplete(newGrid)) {
             return;
         }
 
@@ -227,10 +268,10 @@ class Create extends Component {
 				? !this.state.isAcross
 				: this.state.isAcross;
 
-			const activeClueCells = utils.findActiveClueCells(cell, isAcross, this.state.grid, this.state.rowLength);
-			const altDirActiveClueCells = utils.findActiveClueCells(cell, !isAcross, this.state.grid, this.state.rowLength);
-			const activeClue = utils.getActiveClueFromCell(activeClueCells[0], this.state.clues, isAcross);
-			const altDirectionActiveClue = utils.getActiveClueFromCell(altDirActiveClueCells[0], this.state.clues, !isAcross);
+			const activeClueCells = gridUtils.findActiveClueCells(cell, isAcross, this.state.grid, this.state.rowLength);
+			const altDirActiveClueCells = gridUtils.findActiveClueCells(cell, !isAcross, this.state.grid, this.state.rowLength);
+			const activeClue = clueUtils.getActiveClueFromCell(activeClueCells[0], this.state.clues, isAcross);
+			const altDirectionActiveClue = clueUtils.getActiveClueFromCell(altDirActiveClueCells[0], this.state.clues, !isAcross);
 
 			this.setState({
 				activeCell: cell,
@@ -249,15 +290,16 @@ class Create extends Component {
         } else {
             newGrid[cell] = false;
         }
-		const newClues = buildCreateClues(newGrid, this.state.rowLength, this.state.clues);
-		const newActiveClueCells = utils.findActiveClueCells(this.state.activeCell, this.state.isAcross, newGrid, this.state.rowLength);
-        const newLabels = utils.makeLabels(newClues);
+		const newClues = clueUtils.buildCreateClues(newGrid, this.state.rowLength, this.state.clues);
+		const newActiveClueCells = gridUtils.findActiveClueCells(this.state.activeCell, this.state.isAcross, newGrid, this.state.rowLength);
+        const newLabels = gridUtils.makeLabels(newClues);
 
         this.setState({
             grid: newGrid,
             clues: newClues,
 			labels: newLabels,
-			activeClueCells: newActiveClueCells
+			activeClueCells: newActiveClueCells,
+			puzzleSaved: false
         })
     }
 
@@ -265,10 +307,10 @@ class Create extends Component {
 		let newActiveClue = {};
 		newActiveClue[clueNum] = this.state.clues[clueNum];
 
-		const [activeCell, activeClueCells, isAcross] = utils.getActiveCellsFromClue(newActiveClue, this.state.grid, this.state.rowLength);
+		const {activeCell, activeClueCells, isAcross} = gridUtils.getActiveCellsFromClue(newActiveClue, this.state.grid, this.state.rowLength);
 
-		const altDirClueFirstCell = utils.findActiveClueCells(activeCell, !isAcross, this.state.grid, this.state.rowLength)[0];
-		const altDirectionActiveClue = utils.getActiveClueFromCell(altDirClueFirstCell, this.state.clues, !isAcross);
+		const altDirClueFirstCell = gridUtils.findActiveClueCells(activeCell, !isAcross, this.state.grid, this.state.rowLength)[0];
+		const altDirectionActiveClue = clueUtils.getActiveClueFromCell(altDirClueFirstCell, this.state.clues, !isAcross);
 
 		this.setState({
 			activeClue: newActiveClue,
@@ -285,7 +327,10 @@ class Create extends Component {
 		if (clueNum && newClues[clueNum]) {
 			newClues[clueNum].clue = e.target.value;
 		}
-		this.setState({clues: newClues});
+		this.setState({
+			clues: newClues,
+			puzzleSaved: false
+		});
 	}
 
 	handleClearClick(e) {
@@ -299,156 +344,90 @@ class Create extends Component {
         this.setState({blankMode: !this.state.blankMode});
     }
 
-	handleNotesClick(e) {
-		this.setState({notesMode: !this.state.notesMode});
+	handleSaveClick(name, shouldEdit) {
+		// edit puzzle name
+		if (shouldEdit) {
+			this.setState({saveModalOpen: true});
+			return;
+		}
+
+		if (name != null) {
+			// just made/changed name
+			this.savePuzzle(name, this.state.puzzleName);
+		} else if (this.state.puzzleName != null) {
+			// already have name
+			this.savePuzzle(this.state.puzzleName);
+		} else {
+			// dont have name yet
+			this.setState({saveModalOpen: true});
+		}
 	}
 
-	handleSaveClick(e) {
-		this.setState({saveModalOpen: true});
+	handleLoadClick(name, shouldClose = false) {
+		if (shouldClose) {
+			this.setState({loadModalOpen: false});
+		} else if (name != null) {
+			this.loadPuzzle(name);
+		} else {
+			this.setState({loadModalOpen: true});
+		}
 	}
 
-	handleModalSaveClick(name) {
-		this.setState({
-			puzzleName: name,
-			loadModalOpen: false,
-			saveModalOpen: false
-		});
+	handlePuzzleDeleteClick(name) {
+		let newSavedPuzzles = Object.assign({}, this.state.savedPuzzles);
+		delete newSavedPuzzles[name];
+		if (!Object.keys(newSavedPuzzles).some(key => key !== this.state.puzzleName)) {
+			this.setState({loadModalOpen: false}, () => {
+				this.refreshSavedPuzzles(newSavedPuzzles);
+			});
+		} else {
+			this.refreshSavedPuzzles(newSavedPuzzles);
+		}
 	}
 
-	handleLoadClick(e) {
-		this.setState({loadModalOpen: true});
+	handlePrintClick(e) {
+		this.setState({printModalOpen: true})
 	}
 
 	handleModalClose(e) {
 		this.setState({
 			saveModalOpen: false,
-			loadModalOpen: false
+			loadModalOpen: false,
+			printModalOpen: false
 		});
 	}
 
 	moveToNextCell(isAcross, ignoreUnfinishedClues, wasEmptyCell) {
-		let currentCell = this.state.activeCell;
-		let foundNextCell = false;
-
-		// find next closest empty cell
-		while (!foundNextCell) {
-			let activeClueCells = utils.findActiveClueCells(currentCell, isAcross, this.state.grid, this.state.rowLength);
-			let endOfClue = activeClueCells[activeClueCells.length - 1] === currentCell;
-				
-			let unfinishedClue = false;
-			if (endOfClue && !ignoreUnfinishedClues) {
-				unfinishedClue = activeClueCells.some(cell => {
-					return this.state.grid[cell] === null 
-						&& this.state.activeCell !== cell ;
-				});
-			}
-
-			if (unfinishedClue) {
-				// if we reach the end by filling a cell and the current clue has an empty cell somewhere, 
-				// go back to first cell in clue and eventually find empty cell
-				currentCell = activeClueCells[0];
-			} else if (isAcross) {	
-				// if across, always move laterally and loop back to cell 0 for a new row
-				currentCell += 1;
-			} else {
-				// if down, move down within clue, then move to next down clue
-				let clueStartCell = activeClueCells[0];
-				let activeClue = utils.getActiveClueFromCell(clueStartCell, this.state.clues, isAcross);
-				// let endOfClue = currentCell === activeClueCells[activeClueCells.length - 1];
-
-				if (endOfClue) {
-					currentCell = utils.getNextDownClueStartCell(activeClue, this.state.clues);
-				} else {
-					currentCell += this.state.rowLength;
-				}
-			}
-
-			// return to first cell if we're at the last cell
-			if (Math.floor(currentCell / this.state.rowLength) > this.state.rowLength - 1 
-				|| currentCell % this.state.rowLength > this.state.rowLength - 1) {
-				currentCell = 0;
-			}
-
-			// if previously filled cell was empty, don't stop until we find next empty cell
-			// if it had value, stop at next valid cell we find, even if it had a value
-			foundNextCell = wasEmptyCell 
-				? (this.state.grid[currentCell] === null) 
-				: (this.state.grid[currentCell] !== false);
-		}
-
-		const startOfClue = utils.findActiveClueCells(currentCell, isAcross, this.state.grid, this.state.rowLength)[0];
-		const startOfAltDirClue = utils.findActiveClueCells(currentCell, !isAcross, this.state.grid, this.state.rowLength)[0];
-
-		this.setState({
-			activeCell: currentCell,
-			activeClueCells: utils.findActiveClueCells(currentCell, isAcross, this.state.grid, this.state.rowLength),
-			activeClue: utils.getActiveClueFromCell(startOfClue, this.state.clues, isAcross),
-			altDirectionActiveClue: utils.getActiveClueFromCell(startOfAltDirClue, this.state.clues, !isAcross)
-		});
+		const nextCellState = utils.getNextCellState(
+			this.state.grid,
+			this.state.clues,
+			this.state.activeCell,
+			this.state.rowLength,
+			isAcross, 
+			ignoreUnfinishedClues, 
+			wasEmptyCell
+		);
+		this.setState(nextCellState);
 	}
 
 	moveToPrevCell(isAcross, shouldDelete) {
-		let currentCell = this.state.activeCell;
-		let foundNextCell = false;
-
-		while (!foundNextCell) {
-			let activeClueCells = utils.findActiveClueCells(currentCell, isAcross, this.state.grid, this.state.rowLength);
-
-			if (isAcross) {
-				currentCell -= 1;
-			} else {
-				let clueStartCell = activeClueCells[0];
-				let activeClue = utils.getActiveClueFromCell(clueStartCell, this.state.clues, isAcross);
-				let startOfClue = activeClueCells[0] === currentCell;
-
-				if (startOfClue) {
-					currentCell = utils.getPreviousDownClueEndCell(activeClue, this.state.clues, this.state.grid, this.state.rowLength);
-				} else {
-					currentCell -= this.state.rowLength;
-				}
-			}
-			 
-			// don't do anything if we're at first cell
-			if (currentCell < 0) {
-				return;
-			}
-
-			foundNextCell = this.state.grid[currentCell] !== false;
-		}
-
-		const newActiveCell = currentCell;
-
-		// TODO: DELETE WHEN CELL [0,0]
-
-		const stayOnCell = this.state.grid[this.state.activeCell] !== null && shouldDelete;
-		let newGrid = this.state.grid.slice();
-
-		// delete active cell value, and previous cell value if the active cell is empty
-		if (shouldDelete) {
-			newGrid[this.state.activeCell] = null;
-			if (!stayOnCell) {
-				newGrid[newActiveCell] = null;
-			}
-		}
-
-		// use different cell to find active clue depending on if we moved or stayed cells
-		const newClueCell = stayOnCell ? this.state.activeCell : newActiveCell;
-		const startOfClue = utils.findActiveClueCells(newClueCell, isAcross, this.state.grid, this.state.rowLength)[0];
-		const startOfAltDirClue = utils.findActiveClueCells(newClueCell, !isAcross, this.state.grid, this.state.rowLength)[0];
-
-		// if active cell had value, stay there. otherwise, move to previous cell
-		this.setState({
-			grid: newGrid,
-			activeCell: stayOnCell ? this.state.activeCell : newActiveCell,
-			activeClueCells: stayOnCell ? this.state.activeClueCells : utils.findActiveClueCells(newActiveCell, isAcross, this.state.grid, this.state.rowLength),
-			activeClue: utils.getActiveClueFromCell(startOfClue, this.state.clues, isAcross),
-			altDirectionActiveClue: utils.getActiveClueFromCell(startOfAltDirClue, this.state.clues, !isAcross),
-		});
+		const prevCellState = utils.getPrevCellState(
+			this.state.grid,
+			this.state.clues,
+			this.state.activeCell,
+			this.state.rowLength,
+			this.state.activeClueCells,
+			null,
+			null,
+			null,
+			isAcross,
+			shouldDelete,
+		);
+		this.setState(prevCellState);
 	}
 
 	render() {
 		const body = this.state.loading ? 
-		
 			<LoaderContainer>
 				<ClipLoader 
 					size={100}
@@ -471,7 +450,6 @@ class Create extends Component {
 				     	    rowLength={this.state.rowLength} 
 				     	    activeCell={this.state.activeCell}
 				     	    activeClueCells={this.state.activeClueCells}
-				     	    noteCells={this.state.noteCells}
 				     	    handleCellClick={this.handleCellClick}
 				     	    labels={this.state.labels} />
 		     	    </GridHalfRail>
@@ -491,28 +469,39 @@ class Create extends Component {
 
 		return (
 			<Fragment>
-				<StyledCreate blurred={this.state.saveModalOpen || this.state.loadModalOpen}>
+				<StyledCreate blurred={this.state.saveModalOpen || this.state.loadModalOpen || this.state.printModalOpen}>
 					<NavContainer>
 						<NavWrapper
 							mode="create"
+							puzzleSaved={this.state.puzzleSaved}
+							puzzleName={this.state.puzzleName}
+							savedPuzzles={this.state.savedPuzzles}
 							toggleSidebarOpen={this.props.toggleSidebarOpen}
 							handleClearClick={this.handleClearClick}
 							handleBlankClick={this.handleBlankClick}
 							handleSaveClick={this.handleSaveClick}
-							handleLoadClick={this.handleLoadClick} />
+							handleLoadClick={this.handleLoadClick} 
+							handlePrintClick={this.handlePrintClick}
+							handleNewClick={this.setupNewPuzzle} />
 					</NavContainer>
 					{body}
 				</StyledCreate> 
 
-				{(this.state.saveModalOpen || this.state.loadModalOpen) && 
+				{(this.state.saveModalOpen || this.state.loadModalOpen || this.state.printModalOpen) && 
 					<CreateModal 
+						grid={this.state.grid}
+						labels={this.state.labels}
+						clues={this.state.clues}
+						savedPuzzles={this.state.savedPuzzles}
 						saveModalOpen={this.state.saveModalOpen}
 						loadModalOpen={this.state.loadModalOpen}
+						printModalOpen={this.state.printModalOpen}
 						handleModalClose={this.handleModalClose}
-						handleModalSaveClick={this.handleModalSaveClick}
+						handleSaveClick={this.handleSaveClick}
+						handleLoadClick={this.handleLoadClick}
+						handlePuzzleDeleteClick={this.handlePuzzleDeleteClick}
 						puzzleName={this.state.puzzleName} />
 				}
-					
 			</Fragment>
 		);
 	}

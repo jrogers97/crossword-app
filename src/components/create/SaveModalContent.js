@@ -1,24 +1,37 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 
-const SaveModalContent = ({puzzleName, handleModalSaveClick}) => {
-    const [name, setName] = React.useState("");
+const SaveModalContent = ({puzzleName, handleSaveClick}) => {
+    const [name, setName] = useState("");
+    const [invalidName, setInvalidName] = useState(false);
 
-    React.useEffect(() => {
+    const validateName = (e) => {
+        e.preventDefault();
+        if (name === "") {
+            setInvalidName(true);
+        } else {
+            handleSaveClick(name, false);
+        }
+    }
+
+    useEffect(() => {
         setName(puzzleName || "");
     }, [puzzleName]);
 
     return (
         <StyledSaveModalContent>
             <Header> Give your puzzle a name! </Header>
-            <FormWrapper>
-                <Input 
-                    type="text"
-                    placeholder='"My crossword puzzle"'
-                    value={name}
-                    onChange={(e) => setName(e.target.value)} />
+            <FormWrapper onSubmit={validateName}>
+                <InputWrapper>
+                    <Input 
+                        type="text"
+                        placeholder='"My crossword puzzle"'
+                        value={name}
+                        onChange={(e) => setName(e.target.value)} />
 
-                <SaveButton type="submit" onClick={() => handleModalSaveClick(name)}> Save </SaveButton>
+                    {invalidName && <Warning> Your puzzle needs a name </Warning>}
+                </InputWrapper>
+                <SaveButton type="submit"> Save </SaveButton>
             </FormWrapper>
         </StyledSaveModalContent>
     );
@@ -29,15 +42,20 @@ const StyledSaveModalContent = styled.div`
     margin-bottom: 10px;
 `;
 
-const FormWrapper = styled.div`
+const FormWrapper = styled.form`
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 `;
 
 const Header = styled.p`
     font-weight: bold;
     font-size: 20px;
     margin-bottom: 20px;
+`;
+
+const InputWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
 `;
 
 const Input = styled.input`
@@ -49,6 +67,11 @@ const Input = styled.input`
     margin-right: 10px;
     min-width: 200px;
     line-height: 17px;
+`;
+
+const Warning = styled.span`
+    color: #da3849;
+    font-size: 13px;
 `;
 
 const SaveButton = styled.button`

@@ -1,71 +1,38 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import eraserIcon from '../../icon/eraser.svg';
 import saveIcon from '../../icon/save.svg';
 import loadIcon from '../../icon/load.svg';
-
-// class CreateNav extends Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {blankButtonActive: false};
-//     }
-
-//     handleNavButtonClick(e) {
-//         this.setState({blankButtonActive: !this.state.blankButtonActive});
-//     }
-
-//     render() {
-//         return (
-//             <ButtonSet>
-//                 <BlankButton
-//                     isActive={this.state.blankButtonActive}
-//                     onClick={(e) => {
-//                         this.handleNavButtonClick(e);
-//                         this.props.handleBlankClick(e);
-//                     }}>
-//                     <BlankIcon 
-//                         src={eraserIcon}
-//                         isActive={this.state.blankButtonActive}
-//                         alt="Eraser" />
-
-//                     <BlankText isActive={this.state.blankButtonActive}> Eraser </BlankText>
-//                 </BlankButton>
-
-//                 <Button
-//                     onClick={this.props.handleLoadClick}>
-//                     <ButtonIcon 
-//                         src={loadIcon}
-//                         alt="Load Puzzle" />
-//                     <ButtonText> Load </ButtonText>
-//                 </Button>
-
-//                 <Button
-//                     onClick={this.props.handleSaveClick}>
-//                     <ButtonIcon
-//                         src={saveIcon}
-//                         alt="Save Puzzle" />
-//                     <ButtonText> Save </ButtonText>
-//                 </Button>
-//             </ButtonSet>
-//         );
-//     }
-// }
+import checkIcon from '../../icon/check.svg';
+import plusIcon from '../../icon/plus-circled.svg';
+import printIcon from '../../icon/download.svg';
 
 const CreateNav = ({
+    savedPuzzles,
     handleBlankClick,
     handleLoadClick,
-    handleSaveClick
+    handlePrintClick,
+    handleSaveClick,
+    handleNewClick,
+    puzzleSaved,
+    puzzleName
 }) => {
-    const [blankButtonActive, setBlankButtonActive] = React.useState(false);
-
-    const handleBlankButtonClick = (e) => setBlankButtonActive(!blankButtonActive);
+    const [blankButtonActive, setBlankButtonActive] = useState(false);
+    const otherPuzzlesSaved = Object.keys(savedPuzzles).some(key => key !== puzzleName);
 
     return (
+        <React.Fragment>
+        <Button onClick={handleNewClick}>
+            <ButtonIcon 
+                src={plusIcon} 
+                alt="New Puzzle" />
+            <ButtonText> New Puzzle </ButtonText>
+        </Button>
         <ButtonSet>
             <BlankButton
                 isActive={blankButtonActive}
                 onClick={(e) => {
-                    handleBlankButtonClick(e);
+                    setBlankButtonActive(!blankButtonActive);
                     handleBlankClick(e);
                 }}>
                 <BlankIcon 
@@ -76,36 +43,54 @@ const CreateNav = ({
                 <BlankText isActive={blankButtonActive}> Eraser </BlankText>
             </BlankButton>
 
-            <Button
-                onClick={handleLoadClick}>
-                <ButtonIcon 
-                    src={loadIcon}
-                    alt="Load Puzzle" />
-                <ButtonText> Load </ButtonText>
-            </Button>
+            {otherPuzzlesSaved && 
+                <Button onClick={() => handleLoadClick(null)}>
+                    <ButtonIcon 
+                        src={loadIcon}
+                        alt="Load Puzzle" />
+                    <ButtonText> Load </ButtonText>
+                </Button> 
+            }
 
             <Button
-                onClick={handleSaveClick}>
+                saved={puzzleSaved}
+                onClick={() => handleSaveClick(null, false)}>
                 <ButtonIcon
-                    src={saveIcon}
+                    src={puzzleSaved ? checkIcon : saveIcon}
                     alt="Save Puzzle" />
-                <ButtonText> Save </ButtonText>
+                <ButtonText> {puzzleSaved ? "Saved" : "Save"} </ButtonText>
+            </Button>
+
+            <Button onClick={handlePrintClick}>
+                <ButtonIcon src={printIcon} alt="Download" />
+                <ButtonText> Download </ButtonText>
             </Button>
         </ButtonSet>
+        </React.Fragment>
     );
 }
 
 const ButtonSet = styled.div`
+    height: 100%;
     margin: 0 20px 0 auto;
+    display: flex;
+    justify-content: center;
 `;
 
-const Button = styled.button`
+const Button = styled(({saved, ...rest}) => <button {...rest}/>)`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     border: none;
-    height: 44px;
-    padding: 1px 20px;
+    height: 100%;
+    width: 80px;
+    padding: 6px 20px;
+    white-space: nowrap;
+    background-color: transparent;
+    pointer-events: ${props => props.saved ? "none" : "inherit"};
     &:hover {
-        cursor: pointer;
-    }
+		cursor: ${props => props.saved ? "auto" : "pointer"};
+	}
     &:focus {
         outline: none;
     }
@@ -122,6 +107,8 @@ const ButtonIcon = styled.img`
 
 const ButtonText = styled.p`
     text-align: center;
+    color: #555555;
+    margin-top: 1px;
 `;
 
 const BlankButton = styled(({isActive, ...rest}) => <Button {...rest} />)`
@@ -133,7 +120,7 @@ const BlankIcon = styled(({isActive, ...rest}) => <ButtonIcon {...rest} />)`
 `;
 
 const BlankText = styled(({isActive, ...rest}) => <ButtonText {...rest} />)`
-    color: ${props => props.isActive ? "white" : "black"};
+    color: ${props => props.isActive ? "white" : "#555555"};
 `;
 
 export default CreateNav;

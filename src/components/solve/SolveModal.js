@@ -42,6 +42,8 @@ const Modal = ({hasStarted, loading, paused, timerValue, finished, correct, hand
 }
 
 const ModalOverlay = styled.div`
+	align-items: center;
+	justify-content: center;
 	position: absolute;
 	height: 100vh;
 	width: 100vw;
@@ -50,15 +52,11 @@ const ModalOverlay = styled.div`
 	top: 0;
 	left: 0;
 	background-color: rgba(255,255,255,0.5);
-	display: ${props => props.hidden ? "none" : "block"};
+	display: ${props => props.hidden ? "none" : "flex"};
 `;
 
 const ModalContent = styled.div`
 	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin-top: -150px;
-	margin-left: -200px;
 	height: 300px;
 	width: 400px;
 	background-color: white;

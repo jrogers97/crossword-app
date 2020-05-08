@@ -6,7 +6,7 @@ const PuzzleHeader = ({puzzleName, handleEditClick}) => {
     return (
         <StyledPuzzleHeader hidden={!puzzleName}>
             <PuzzleName>{puzzleName}</PuzzleName>
-            <EditButton onClick={handleEditClick}>
+            <EditButton onClick={() => handleEditClick(null, true)}>
                 <EditIcon src={pencilIcon} />
             </EditButton>
         </StyledPuzzleHeader>

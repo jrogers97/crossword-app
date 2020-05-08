@@ -1,68 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     BrowserRouter as Router,
     Switch,
     Route
 } from "react-router-dom";
+import styled from 'styled-components';
 import Solve from './solve/Solve';
 import Create from './create/Create';
 import Sidebar from './common/Sidebar';
-
-// class App extends Component {
-//     constructor(props) {
-//         super(props);
-
-//         this.state = {
-//             sidebarOpen: false,
-//             activePage: "solve"
-//         };
-
-//         this.toggleSidebarOpen = this.toggleSidebarOpen.bind(this);
-//         this.changeActivePage = this.changeActivePage.bind(this);
-//     }
-
-//     toggleSidebarOpen(e) {
-//         this.setState({sidebarOpen: !this.state.sidebarOpen});
-//     }
-
-//     // change active page and close sidebar
-//     changeActivePage(pageName) {
-//         this.setState({
-//             activePage: pageName,
-//             sidebarOpen: false
-//         });
-//     }
-
-//     render() {
-//         return (
-//             <Router>
-//                 <Sidebar 
-//                     open={this.state.sidebarOpen}
-//                     activePage={this.state.activePage}
-//                     toggleSidebarOpen={this.toggleSidebarOpen} 
-//                     changeActivePage={this.changeActivePage} />
-
-//                 <Switch>
-//                     <Route path="/solve">
-//                         <Solve 
-//                             toggleSidebarOpen={this.toggleSidebarOpen}
-//                             changeActivePage={this.changeActivePage} />
-//                     </Route>
-
-//                     <Route path="/create">
-//                         <Create 
-//                             toggleSidebarOpen={this.toggleSidebarOpen}
-//                             changeActivePage={this.changeActivePage} />
-//                     </Route>
-//                 </Switch>
-//             </Router>
-//         );
-//     }
-// }
+import FrontDoor from './common/FrontDoor';
 
 const App = () => {
-    const [sidebarOpen, setSidebarOpen] = React.useState(false);
-    const [activePage, setActivePage] = React.useState("solve");
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [activePage, setActivePage] = useState("");
 
     const toggleSidebarOpen = () => setSidebarOpen(!sidebarOpen);
     const changeActivePage = (pageName) => {
@@ -72,13 +22,19 @@ const App = () => {
 
     return (
         <Router>
-            <Sidebar 
-                open={sidebarOpen}
-                activePage={activePage}
-                toggleSidebarOpen={toggleSidebarOpen} 
-                changeActivePage={changeActivePage} />
+            {activePage !== "" &&
+                <Sidebar 
+                    open={sidebarOpen}
+                    activePage={activePage}
+                    toggleSidebarOpen={toggleSidebarOpen} 
+                    changeActivePage={changeActivePage} />
+            }
 
             <Switch>
+                <Route exact path="/">
+                    <FrontDoor />
+                </Route>
+
                 <Route path="/solve">
                     <Solve 
                         toggleSidebarOpen={toggleSidebarOpen}
@@ -91,8 +47,28 @@ const App = () => {
                         changeActivePage={changeActivePage} />
                 </Route>
             </Switch>
+
+            <SmallScreenWarning>
+                Sorry! This site doesn't work on small screens. Try it out on a computer!
+            </SmallScreenWarning>
         </Router>
     );
 }
+
+const SmallScreenWarning = styled.div`
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: white;
+    padding: 20px;
+    @media (max-width: 400px) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+`;
 
 export default App;

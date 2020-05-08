@@ -1,11 +1,25 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
 import LoadModalContent from './LoadModalContent';
 import SaveModalContent from './SaveModalContent';
+import PrintModalContent from './PrintModalContent';
 import xIcon from '../../icon/x.svg';
 
-const CreateModal = ({saveModalOpen, loadModalOpen, handleModalClose, handleModalSaveClick, puzzleName}) => {
-    React.useEffect(() => {
+const CreateModal = ({
+    grid,
+    labels,
+	clues,
+    saveModalOpen, 
+    loadModalOpen, 
+    printModalOpen,
+    handleModalClose, 
+    handleSaveClick, 
+    handleLoadClick, 
+    handlePuzzleDeleteClick,
+    puzzleName, 
+    savedPuzzles
+}) => {
+    useEffect(() => {
         const handleClick = (e) => {
             if (e.target.id === "modal-overlay") {
                 handleModalClose();
@@ -17,7 +31,7 @@ const CreateModal = ({saveModalOpen, loadModalOpen, handleModalClose, handleModa
     }, []);
 
     return (
-        <ModalOverlay hidden={!saveModalOpen && !loadModalOpen} id="modal-overlay">
+        <ModalOverlay hidden={!saveModalOpen && !loadModalOpen && !printModalOpen} id="modal-overlay">
             <ModalContent>
                 <ModalCloseButton onClick={handleModalClose}>
                     <ModalCloseIcon src={xIcon} alt="Close" />
@@ -26,11 +40,24 @@ const CreateModal = ({saveModalOpen, loadModalOpen, handleModalClose, handleModa
                 {saveModalOpen && 
                     <SaveModalContent 
                         puzzleName={puzzleName}
-                        handleModalSaveClick={handleModalSaveClick} />
+                        handleSaveClick={handleSaveClick} />
                 }
 
                 {loadModalOpen && 
-                    <LoadModalContent />
+                    <LoadModalContent 
+                        puzzleName={puzzleName}
+                        savedPuzzles={savedPuzzles}
+                        handleLoadClick={handleLoadClick}
+                        handleDeleteClick={handlePuzzleDeleteClick} />
+                }
+
+                {printModalOpen &&
+                    <PrintModalContent
+                        grid={grid}
+                        labels={labels}
+                        clues={clues}
+                        puzzleName={puzzleName}
+                        handleModalClose={handleModalClose} />
                 }
             </ModalContent>
         </ModalOverlay>
@@ -38,6 +65,8 @@ const CreateModal = ({saveModalOpen, loadModalOpen, handleModalClose, handleModa
 }
 
 const ModalOverlay = styled.div`
+    align-items: center;
+    justify-content: center;
 	position: absolute;
 	height: 100vh;
 	width: 100vw;
@@ -46,15 +75,11 @@ const ModalOverlay = styled.div`
 	top: 0;
 	left: 0;
 	background-color: rgba(255,255,255,0.5);
-	display: ${props => props.hidden ? "none" : "block"};
+	display: ${props => props.hidden ? "none" : "flex"};
 `;
 
 const ModalContent = styled.div`
 	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin-top: -150px;
-	margin-left: -200px;
 	background-color: white;
 	box-shadow: 0px 2px 4px 0 rgba(0,0,0,0.5);
 	border-radius: 5px;

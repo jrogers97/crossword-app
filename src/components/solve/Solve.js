@@ -2,16 +2,17 @@ import React, { Component, Fragment } from 'react';
 import smoothscroll from 'smoothscroll-polyfill';
 import ClipLoader from 'react-spinners/ClipLoader';
 import styled from 'styled-components';
-import { fetchRandomData, makeFinishedGrid, makeClues } from '../../util/data';
+import { fetchRandomData } from '../../util/datautils';
 import * as utils from '../../util/utilities';
+import * as gridUtils from '../../util/gridutils';
+import * as clueUtils from '../../util/clueutils';
 
 import { NavWrapper } from '../common/NavWrapper';
-import Grid from './Grid';
-import Clues from './Clues';
-import ClueBanner from './ClueBanner';
+import Grid from '../common/grid/Grid';
+import Clues from '../common/clues/Clues';
+import ClueBanner from '../common/clues/ClueBanner';
 import PuzzleHeader from './PuzzleHeader';
-import Modal from './Modal';
-
+import SolveModal from './SolveModal';
 
 class Solve extends Component {
 	constructor(props) {
@@ -74,13 +75,12 @@ class Solve extends Component {
 				storedState.progressSaved = true;
 				storedState.paused = true;
 			
-				console.log('recalling state ', storedState.timerValue);
 				console.log(storedState);
 				self.setState(storedState);
 			} else {
 				self.setupPuzzle()
 			}
-		}, 0);
+		}, 400);
 
 		document.addEventListener("keydown", this.handleKeyDown);
 		smoothscroll.polyfill();
@@ -98,12 +98,12 @@ class Solve extends Component {
 				if (response && response.data && response.data.size 
 					&& ((response.data.size.cols === 15 && response.data.size.rows === 15)
 					|| (response.data.size.cols === 21 && response.data.size.rows === 21))
-					&& !utils.isRebus(response.data.grid)) {
+					&& !gridUtils.isRebus(response.data.grid)) {
 					console.log(response.data);
 
-					const finishedGrid = makeFinishedGrid(response.data.grid);
+					const finishedGrid = gridUtils.makeFinishedGrid(response.data.grid);
 					const grid = finishedGrid.slice().map(char => char ? null : char);
-					const clues = makeClues(response.data.clues, response.data.gridnums);
+					const clues = clueUtils.makeClues(response.data.clues, response.data.gridnums);
 
 					self.setState({
 						finishedGrid: finishedGrid,
@@ -111,13 +111,13 @@ class Solve extends Component {
 						grid: grid,
 						rowLength: response.data.size.cols,
 						isAcross: true,
-						labels: utils.makeLabels(clues),
+						labels: gridUtils.makeLabels(clues),
 						puzzleDate: response.data.date,
 						puzzleAuthor: response.data.author,
-						activeClue: utils.findFirstActiveClues(true, clues),
-						altDirectionActiveClue: utils.findFirstActiveClues(false, clues),
-						activeCell: utils.findFirstActiveCells(grid, true, response.data.size.cols)[0],
-						activeClueCells: utils.findFirstActiveCells(grid, true, response.data.size.cols)[1],
+						activeClue: clueUtils.findFirstActiveClues(true, clues),
+						altDirectionActiveClue: clueUtils.findFirstActiveClues(false, clues),
+						activeCell: gridUtils.findFirstActiveCells(grid, true, response.data.size.cols)[0],
+						activeClueCells: gridUtils.findFirstActiveCells(grid, true, response.data.size.cols)[1],
 						correctCells: [],
 						incorrectCells: [],
 						revealedCells: [],
@@ -132,12 +132,10 @@ class Solve extends Component {
 						progressSaved: false
 					});
 				} else {
-					console.log('Fetching new puzzle');
 					self.setupPuzzle();
 				}
 			})
 			.catch(error => {
-				console.log('Error: ', error);
 				self.setupPuzzle();
 			});
 
@@ -146,7 +144,6 @@ class Solve extends Component {
 
 	// save state to local storage
 	saveState() {
-		console.log('saving state ', this.state.timerValue);
 		if (!this.state.progressSaved) {
 			localStorage.setItem('solveState', JSON.stringify(this.state));
 			this.setState({progressSaved: true});
@@ -170,10 +167,10 @@ class Solve extends Component {
 
 		if (e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40) {
 			// get possible new active clue/cells
-			const activeClueCellsAcross = utils.findActiveClueCells(this.state.activeCell, true, this.state.grid, this.state.rowLength);
-			const activeClueCellsDown = utils.findActiveClueCells(this.state.activeCell, false, this.state.grid, this.state.rowLength);
-			const activeClueAcross = utils.getActiveClueFromCell(activeClueCellsAcross[0], this.state.clues, true);
-			const activeClueDown = utils.getActiveClueFromCell(activeClueCellsDown[0], this.state.clues, false);
+			const activeClueCellsAcross = gridUtils.findActiveClueCells(this.state.activeCell, true, this.state.grid, this.state.rowLength);
+			const activeClueCellsDown = gridUtils.findActiveClueCells(this.state.activeCell, false, this.state.grid, this.state.rowLength);
+			const activeClueAcross = clueUtils.getActiveClueFromCell(activeClueCellsAcross[0], this.state.clues, true);
+			const activeClueDown = clueUtils.getActiveClueFromCell(activeClueCellsDown[0], this.state.clues, false);
 
 			// left arrow
 			if (e.keyCode === 37) {
@@ -266,7 +263,7 @@ class Solve extends Component {
 				newNoteCells = newNoteCells.filter(cell => cell !== this.state.activeCell);
 			}
 
-			const newGreyedClues = utils.getGreyedClues(newGrid, this.state.clues, this.state.greyedClues, this.state.activeCell, true, this.state.isAcross, this.state.rowLength);
+			const newGreyedClues = clueUtils.getGreyedClues(newGrid, this.state.clues, this.state.greyedClues, this.state.activeCell, true, this.state.isAcross, this.state.rowLength);
 
 			this.setState({
 				grid: newGrid,
@@ -275,7 +272,7 @@ class Solve extends Component {
 				progressSaved: false
 			});
 			
-			if (utils.isGridComplete(newGrid)) {
+			if (gridUtils.isGridComplete(newGrid)) {
 				this.checkFinishedPuzzle(newGrid);
 				return;
 			}
@@ -292,10 +289,10 @@ class Solve extends Component {
 				? !this.state.isAcross
 				: this.state.isAcross;
 
-			const activeClueCells = utils.findActiveClueCells(cell, isAcross, this.state.grid, this.state.rowLength);
-			const altDirActiveClueCells = utils.findActiveClueCells(cell, !isAcross, this.state.grid, this.state.rowLength);
-			const activeClue = utils.getActiveClueFromCell(activeClueCells[0], this.state.clues, isAcross);
-			const altDirectionActiveClue = utils.getActiveClueFromCell(altDirActiveClueCells[0], this.state.clues, !isAcross);
+			const activeClueCells = gridUtils.findActiveClueCells(cell, isAcross, this.state.grid, this.state.rowLength);
+			const altDirActiveClueCells = gridUtils.findActiveClueCells(cell, !isAcross, this.state.grid, this.state.rowLength);
+			const activeClue = clueUtils.getActiveClueFromCell(activeClueCells[0], this.state.clues, isAcross);
+			const altDirectionActiveClue = clueUtils.getActiveClueFromCell(altDirActiveClueCells[0], this.state.clues, !isAcross);
 
 			this.setState({
 				activeCell: cell,
@@ -311,10 +308,10 @@ class Solve extends Component {
 		let newActiveClue = {};
 		newActiveClue[clueNum] = this.state.clues[clueNum];
 
-		const [activeCell, activeClueCells, isAcross] = utils.getActiveCellsFromClue(newActiveClue, this.state.grid, this.state.rowLength);
+		const {activeCell, activeClueCells, isAcross} = gridUtils.getActiveCellsFromClue(newActiveClue, this.state.grid, this.state.rowLength);
 
-		const altDirClueFirstCell = utils.findActiveClueCells(activeCell, !isAcross, this.state.grid, this.state.rowLength)[0];
-		const altDirectionActiveClue = utils.getActiveClueFromCell(altDirClueFirstCell, this.state.clues, !isAcross);
+		const altDirClueFirstCell = gridUtils.findActiveClueCells(activeCell, !isAcross, this.state.grid, this.state.rowLength)[0];
+		const altDirectionActiveClue = clueUtils.getActiveClueFromCell(altDirClueFirstCell, this.state.clues, !isAcross);
 
 		this.setState({
 			activeClue: newActiveClue,
@@ -328,7 +325,7 @@ class Solve extends Component {
 	handleNewPuzzleClick(e) {
 		const self = this;
 		if (this.state.ignoredDays.length >= 7) {
-			alert("No days selected");
+			alert("No days selected!");
 			return;
 		}
 		this.setState({loading: true, hasStarted: false});
@@ -352,11 +349,11 @@ class Solve extends Component {
 				break;
 			// clue
 			case 1: 
-				cellsToCheck = utils.findActiveClueCells(this.state.activeCell, this.state.isAcross, this.state.grid, this.state.rowLength);
+				cellsToCheck = gridUtils.findActiveClueCells(this.state.activeCell, this.state.isAcross, this.state.grid, this.state.rowLength);
 				break;
 			// puzzle
 			case 2:
-				cellsToCheck = utils.findAllCells(this.state.grid);
+				cellsToCheck = gridUtils.findAllCells(this.state.grid);
 				break;
 
 			default:
@@ -397,11 +394,11 @@ class Solve extends Component {
 				break;
 			// clue
 			case 1: 
-				cellsToReveal = utils.findActiveClueCells(this.state.activeCell, this.state.isAcross, this.state.grid, this.state.rowLength);
+				cellsToReveal = gridUtils.findActiveClueCells(this.state.activeCell, this.state.isAcross, this.state.grid, this.state.rowLength);
 				break;
 			// puzzle
 			case 2:
-				cellsToReveal = utils.findAllCells(this.state.grid);
+				cellsToReveal = gridUtils.findAllCells(this.state.grid);
 				break;
 
 			default:
@@ -429,7 +426,7 @@ class Solve extends Component {
 			}
 		});
 
-		const newGreyedClues = utils.getGreyedClues(newGrid, this.state.clues, this.state.greyedClues, this.state.activeCell, true, this.state.isAcross, this.state.rowLength);
+		const newGreyedClues = clueUtils.getGreyedClues(newGrid, this.state.clues, this.state.greyedClues, this.state.activeCell, true, this.state.isAcross, this.state.rowLength);
 
 		this.setState({
 			revealedCells: revealedCells,
@@ -440,7 +437,7 @@ class Solve extends Component {
 			progressSaved: false
 		});
 
-		if (utils.isGridComplete(newGrid)) {
+		if (gridUtils.isGridComplete(newGrid)) {
 			this.checkFinishedPuzzle(newGrid);
 		}
 	}
@@ -466,7 +463,6 @@ class Solve extends Component {
 	}
 
 	handleTimerUpdate(timerValue) {
-		console.log('timer update: ', timerValue);
 		this.setState({timerValue: timerValue});
 	}
 
@@ -490,130 +486,32 @@ class Solve extends Component {
 	}
 
 	moveToNextCell(isAcross, ignoreUnfinishedClues, wasEmptyCell) {
-		let currentCell = this.state.activeCell;
-		let foundNextCell = false;
-
-		// find next closest empty cell
-		while (!foundNextCell) {
-			let activeClueCells = utils.findActiveClueCells(currentCell, isAcross, this.state.grid, this.state.rowLength);
-			let endOfClue = activeClueCells[activeClueCells.length - 1] === currentCell;
-				
-			let unfinishedClue = false;
-			if (endOfClue && !ignoreUnfinishedClues) {
-				unfinishedClue = activeClueCells.some(cell => {
-					return this.state.grid[cell] === null 
-						&& this.state.activeCell !== cell ;
-				});
-			}
-
-			if (unfinishedClue) {
-				// if we reach the end by filling a cell and the current clue has an empty cell somewhere, 
-				// go back to first cell in clue and eventually find empty cell
-				currentCell = activeClueCells[0];
-			} else if (isAcross) {	
-				// if across, always move laterally and loop back to cell 0 for a new row
-				currentCell += 1;
-			} else {
-				// if down, move down within clue, then move to next down clue
-				let clueStartCell = activeClueCells[0];
-				let activeClue = utils.getActiveClueFromCell(clueStartCell, this.state.clues, isAcross);
-				// let endOfClue = currentCell === activeClueCells[activeClueCells.length - 1];
-
-				if (endOfClue) {
-					currentCell = utils.getNextDownClueStartCell(activeClue, this.state.clues);
-				} else {
-					currentCell += this.state.rowLength;
-				}
-			}
-
-			// return to first cell if we're at the last cell
-			if (Math.floor(currentCell / this.state.rowLength) > this.state.rowLength - 1 
-				|| currentCell % this.state.rowLength > this.state.rowLength - 1) {
-				currentCell = 0;
-			}
-
-			// if previously filled cell was empty, don't stop until we find next empty cell
-			// if it had value, stop at next valid cell we find, even if it had a value
-			foundNextCell = wasEmptyCell 
-				? (this.state.grid[currentCell] === null) 
-				: (this.state.grid[currentCell] !== false);
-		}
-
-		const startOfClue = utils.findActiveClueCells(currentCell, isAcross, this.state.grid, this.state.rowLength)[0];
-		const startOfAltDirClue = utils.findActiveClueCells(currentCell, !isAcross, this.state.grid, this.state.rowLength)[0];
-
-		this.setState({
-			activeCell: currentCell,
-			activeClueCells: utils.findActiveClueCells(currentCell, isAcross, this.state.grid, this.state.rowLength),
-			activeClue: utils.getActiveClueFromCell(startOfClue, this.state.clues, isAcross),
-			altDirectionActiveClue: utils.getActiveClueFromCell(startOfAltDirClue, this.state.clues, !isAcross)
-		});
+		const nextCellState = utils.getNextCellState(
+			this.state.grid,
+			this.state.clues,
+			this.state.activeCell,
+			this.state.rowLength,
+			isAcross, 
+			ignoreUnfinishedClues, 
+			wasEmptyCell
+		);
+		this.setState(nextCellState);
 	}
 
 	moveToPrevCell(isAcross, shouldDelete) {
-		let currentCell = this.state.activeCell;
-		let foundNextCell = false;
-
-		while (!foundNextCell) {
-			let activeClueCells = utils.findActiveClueCells(currentCell, isAcross, this.state.grid, this.state.rowLength);
-
-			if (isAcross) {
-				currentCell -= 1;
-			} else {
-				let clueStartCell = activeClueCells[0];
-				let activeClue = utils.getActiveClueFromCell(clueStartCell, this.state.clues, isAcross);
-				let startOfClue = activeClueCells[0] === currentCell;
-
-				if (startOfClue) {
-					currentCell = utils.getPreviousDownClueEndCell(activeClue, this.state.clues, this.state.grid, this.state.rowLength);
-				} else {
-					currentCell -= this.state.rowLength;
-				}
-			}
-			 
-			// don't do anything if we're at first cell
-			if (currentCell < 0) {
-				return;
-			}
-
-			foundNextCell = this.state.grid[currentCell] !== false;
-		}
-
-		const newActiveCell = currentCell;
-
-		// TODO: DELETE WHEN CELL [0,0]
-
-		const stayOnCell = this.state.grid[this.state.activeCell] !== null && shouldDelete;
-		let newGrid = this.state.grid.slice();
-
-		// delete active cell value, and previous cell value if the active cell is empty
-		if (shouldDelete) {
-			newGrid[this.state.activeCell] = null;
-			if (!stayOnCell && !utils.isCellInGroup(this.state.correctCells, newActiveCell)) {
-				newGrid[newActiveCell] = null;
-			}
-
-			// if we delete checked incorrect cells, remove from incorrect cells
-			this.removeIncorrectCell(this.state.activeCell, !stayOnCell ? newActiveCell : null);
-		}
-
-		const newGreyedClues = utils.getGreyedClues(newGrid, this.state.clues, this.state.greyedClues, stayOnCell ? this.state.activeCell : newActiveCell, 
-			false, isAcross, this.state.rowLength);
-
-		// use different cell to find active clue depending on if we moved or stayed cells
-		const newClueCell = stayOnCell ? this.state.activeCell : newActiveCell;
-		const startOfClue = utils.findActiveClueCells(newClueCell, isAcross, this.state.grid, this.state.rowLength)[0];
-		const startOfAltDirClue = utils.findActiveClueCells(newClueCell, !isAcross, this.state.grid, this.state.rowLength)[0];
-
-		// if active cell had value, stay there. otherwise, move to previous cell
-		this.setState({
-			grid: newGrid,
-			activeCell: stayOnCell ? this.state.activeCell : newActiveCell,
-			activeClueCells: stayOnCell ? this.state.activeClueCells : utils.findActiveClueCells(newActiveCell, isAcross, this.state.grid, this.state.rowLength),
-			activeClue: utils.getActiveClueFromCell(startOfClue, this.state.clues, isAcross),
-			altDirectionActiveClue: utils.getActiveClueFromCell(startOfAltDirClue, this.state.clues, !isAcross),
-			greyedClues: newGreyedClues
-		});
+		const prevCellState = utils.getPrevCellState(
+			this.state.grid,
+			this.state.clues,
+			this.state.activeCell,
+			this.state.rowLength,
+			this.state.activeClueCells,
+			this.state.correctCells,
+			this.state.incorrectCells,
+			this.state.greyedClues,
+			isAcross, 
+			shouldDelete
+		);
+		this.setState(prevCellState);
 	}
 
 	// delete previous cell as well if its not null
@@ -714,7 +612,7 @@ class Solve extends Component {
 					{body}
 			    </StyledSolve> 
 
-			    <Modal 
+			    <SolveModal 
 					handleModalButtonClick={this.handleModalButtonClick}
 					hasStarted={this.state.hasStarted}
 					loading={this.state.loading}
