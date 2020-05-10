@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, {css} from 'styled-components';
 
-const GridCell = React.memo(({ active, activeClue, correct, incorrect, revealed, note, char, label, isSunday }) => {
+const GridCell = React.memo(({ active, activeClue, correct, incorrect, revealed, note, char, label, rowLength}) => {
 	return (
 		<StyledGridCell
 			active={active}
@@ -11,17 +11,17 @@ const GridCell = React.memo(({ active, activeClue, correct, incorrect, revealed,
 			<SpecialCellMarker
 				revealed={revealed}
 				incorrect={incorrect}
-				isSunday={isSunday}>
+				isSunday={rowLength === 21}>
 			</SpecialCellMarker>
 
-			<GridCellLabel isSunday={isSunday}> 
+			<GridCellLabel rowLength={rowLength}> 
 				{label} 
 			</GridCellLabel>
 
 			<GridCellText
 				correct={correct}
 				note={note}
-				isSunday={isSunday}> 
+				rowLength={rowLength}> 
 				{char ? char.toUpperCase() : ""}
 			</GridCellText>
 		</StyledGridCell>
@@ -57,10 +57,10 @@ const SpecialCellMarker = styled.span`
 			width: 0;
 			top: 0;
 			left: ${props.isSunday ? "14px" : "21px"};
-			border-top: ${props.isSunday ? "4px solid #E63333" : "5px solid #E63333"};
-			border-right: ${props.isSunday ? "4px solid #E63333" : "5px solid #E63333"};
-			border-bottom: ${props.isSunday ? "4px solid transparent" : "5px solid transparent"};
-			border-left: ${props.isSunday ? "4px solid transparent" : "5px solid transparent"};
+			border-top: ${props.isSunday ? "4px" : "5px"} solid #E63333;
+			border-right: ${props.isSunday ? "4px" : "5px"} solid #E63333;
+			border-bottom: ${props.isSunday ? "4px" : "5px"} solid transparent;
+			border-left: ${props.isSunday ? "4px" : "5px"} solid transparent;
 			@media (max-width: 1000px) {
 				left: ${props.isSunday ? "10px" : "16px"};
 			}
@@ -90,21 +90,21 @@ const SpecialCellMarker = styled.span`
 `;
 
 const GridCellLabel = styled.span`
-	font-size: ${props => props.isSunday ? "11px" : "12px"};
+	font-size: ${props => props.rowLength * -0.5 + 20}px;
 	position: absolute;
-	top: 0;
-	left: ${props => props.isSunday ? "0" : "0.5px"};
-	line-height: ${props => props.isSunday ? "11px" : "14px"};
+	top: ${props => props.rowLength < 10 ? 1.5 : 0}px;
+	left: ${props => props.rowLength < 15 ? 1 : 0}px;
+	line-height: ${props => props.rowLength * -0.5 + 21.5}px;
 	letter-spacing: -1px;
 	@media (max-width: 1000px) {
-		font-size: ${props => props.isSunday ? "9px" : "10px"};
-		line-height: ${props => props.isSunday ? "9px" : "10px"};
+		font-size: ${props => props.rowLength * -0.5 + 18}px;
+		line-height: ${props => props.rowLength * -0.5 + 19}px;
 		top: 0;
-		left: 0;
+		left: ${props => props.rowLength < 16 ? 0.5 : 0}px;
 	}
 	@media (max-width: 650px) {
-		font-size: 9px;
-		line-height: 9px;
+		font-size: ${props => props.rowLength * -0.5 + 18}px;
+		line-height: ${props => props.rowLength * -0.5 + 18.5}px;
 		top: 0;
 		left: 0;
 	}
@@ -115,7 +115,7 @@ const GridCellText = styled.span`
 	text-align: center;
 	font-weight: 600;
 	padding-top: 7px;
-	font-size: ${props => props.isSunday ? "15px" : "20px"};
+	font-size: ${props => props.rowLength * -1.2 + 39}px;
 	color: ${props => {
 		if (props.correct) {
 			return "#2860D8";
@@ -126,10 +126,10 @@ const GridCellText = styled.span`
 		}
 	}};
 	@media (max-width: 1000px) {
-		font-size: ${props => props.isSunday ? "14px" : "18px"};
+		font-size: ${props => props.rowLength * -1.2 + 38}px;
 	}
 	@media (max-width: 650px) {
-		font-size: ${props => props.isSunday ? "13px" : "15px"};
+		font-size: ${props => props.rowLength * -1.2 + 36}px;
 	}
 `;
 

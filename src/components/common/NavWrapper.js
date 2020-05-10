@@ -31,6 +31,7 @@ const StyledNavWrapper = styled.div`
 const Menu = styled.button`
     border: none;
     margin: 0 20px;
+    background-color: transparent;
     &:hover {
         cursor: pointer;
     }

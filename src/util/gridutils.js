@@ -2,6 +2,24 @@ export const makeFinishedGrid = (grid) => {
 	return grid.map(char => char === "." ? false : char.toUpperCase());
 }
 
+export const resizeGrid = (newRowLength, oldRowLength, grid) => {
+	const delta = newRowLength - oldRowLength;
+	let newGrid = [];
+	// go row by row and add/delete items as necessary
+	for (let i=0; i < oldRowLength * oldRowLength; i += oldRowLength) {
+		const oldRow = grid.slice(i, i + oldRowLength);
+		const newRow = (delta > 0) ? oldRow.concat(Array(delta).fill(null)) : oldRow.slice(0, oldRowLength + delta);
+		newGrid = newGrid.concat(newRow);
+	}
+	return (delta > 0) ? newGrid.concat(Array(newRowLength * delta).fill(null)) : newGrid.slice(0, newRowLength * newRowLength);
+}	
+
+export const resizeActiveCell = (newRowLength, oldRowLength, oldActiveCell) => {
+	const oldActiveRow = Math.floor(oldActiveCell / oldRowLength);
+	const oldActiveCol = oldActiveCell % oldRowLength;
+	return (oldActiveRow * newRowLength) + oldActiveCol;
+}
+
 // given a cell, find all cells in relevant clue
 export const findActiveClueCells = (activeCell, isAcross, grid, rowLength) => {
 	let activeClueCells = [];

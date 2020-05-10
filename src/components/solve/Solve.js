@@ -48,19 +48,19 @@ class Solve extends Component {
 			correct: false
 		}
 
-		this.handleCellClick        = this.handleCellClick.bind(this);
-		this.handleClueClick        = this.handleClueClick.bind(this);
-		this.handleKeyDown          = this.handleKeyDown.bind(this);
-		this.handleNewPuzzleClick   = this.handleNewPuzzleClick.bind(this);
-		this.handleCheckClick       = this.handleCheckClick.bind(this);
-		this.handleRevealClick      = this.handleRevealClick.bind(this);
-		this.handleClearClick       = this.handleClearClick.bind(this);
-		this.handleTimerPause	    = this.handleTimerPause.bind(this);
-		this.handleTimerUpdate	    = this.handleTimerUpdate.bind(this);
-		this.handleCheckboxChange   = this.handleCheckboxChange.bind(this);
-		this.handleNotesClick       = this.handleNotesClick.bind(this);
+		this.handleCellClick = this.handleCellClick.bind(this);
+		this.handleClueClick = this.handleClueClick.bind(this);
+		this.handleKeyDown = this.handleKeyDown.bind(this);
+		this.handleNewPuzzleClick = this.handleNewPuzzleClick.bind(this);
+		this.handleCheckClick = this.handleCheckClick.bind(this);
+		this.handleRevealClick = this.handleRevealClick.bind(this);
+		this.handleClearClick = this.handleClearClick.bind(this);
+		this.handleTimerPause = this.handleTimerPause.bind(this);
+		this.handleTimerUpdate = this.handleTimerUpdate.bind(this);
+		this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+		this.handleNotesClick = this.handleNotesClick.bind(this);
 		this.handleModalButtonClick = this.handleModalButtonClick.bind(this);
-		this.saveState				= this.saveState.bind(this);
+		this.saveState = this.saveState.bind(this);
 	}
 
 	componentDidMount() {

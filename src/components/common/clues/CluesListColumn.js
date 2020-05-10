@@ -9,6 +9,7 @@ const CluesListColumn = ({
 	greyedClues,
 	activeClue,
 	altDirectionActiveClue,
+	handleClearClick,
 	handleClueClick,
 	handleClueInput,
 	label
@@ -22,25 +23,27 @@ const CluesListColumn = ({
 	}, []);
 
 	useEffect(() => {
-		if (mode !== "create") {
-			// get top offset of active clue list item, scroll to it
-			const activeListItem = listItems.current.find(item => item.id === Object.keys(activeClue)[0]);
-			const altActiveListItem = listItems.current.find(item => item.id === Object.keys(altDirectionActiveClue)[0]);
+		// get top offset of active clue list item, scroll to it
+		const activeListItem = listItems.current.find(item => item.id === Object.keys(activeClue)[0]);
+		const altActiveListItem = listItems.current.find(item => item.id === Object.keys(altDirectionActiveClue)[0]);
 
-			const listItemOffset = activeListItem ? activeListItem.offsetTop - listColumnNode.current.offsetTop : null;
-			const altListItemOffset = altActiveListItem ? altActiveListItem.offsetTop - listColumnNode.current.offsetTop : null;
+		const listItemOffset = activeListItem ? activeListItem.offsetTop - listColumnNode.current.offsetTop : null;
+		const altListItemOffset = altActiveListItem ? altActiveListItem.offsetTop - listColumnNode.current.offsetTop : null;
 
-			if (listItemOffset !== null) {
-				listColumnNode.current.scrollTo({top: listItemOffset, behavior: 'smooth'});
-			} else if (altListItemOffset !== null) {
-				listColumnNode.current.scrollTo({top: altListItemOffset, behavior: 'smooth'});
-			}
+		if (listItemOffset !== null) {
+			listColumnNode.current.scrollTo({top: listItemOffset, behavior: 'smooth'});
+		} else if (altListItemOffset !== null) {
+			listColumnNode.current.scrollTo({top: altListItemOffset, behavior: 'smooth'});
 		}
 	}, [activeClue, altDirectionActiveClue, mode]);
 
 	return (
 		<CluesListColumnContainer>
-			<CluesListColumnLabel> {label} </CluesListColumnLabel>
+			<CluesListColumnHeader>
+				<HeaderLabel> {label} </HeaderLabel>
+				{mode === "create" && 
+					<HeaderClearLink onClick={() => handleClearClick(label)}> Clear </HeaderClearLink>}
+			</CluesListColumnHeader>
 			<StyledCluesListColumn id={label}>
 				{Object.keys(clues).map(clueNum => 
 					<CluesListItem 
@@ -68,10 +71,30 @@ const CluesListColumnContainer = styled.div`
 	}
 `;
 
-const CluesListColumnLabel = styled.p`
-	font-weight: bold;
+const CluesListColumnHeader = styled.div`
+	display: flex;
+	align-items: flex-end;
 	padding: 18px 0 5px 0;
 	border-bottom: 1px solid rgba(0,0,0,0.2);
+`;
+
+const HeaderLabel = styled.p`
+	font-weight: bold;
+`;
+
+const HeaderClearLink = styled.button`
+	font-size: 12px;
+	font-weight: bold;
+	color: #0b7b99;
+	border: none;
+	background-color: transparent;
+	margin: 0 10px 0 auto;
+	&:focus {
+		outline: none;
+	}
+	&:hover {
+		cursor: pointer
+	}
 `;
 
 const StyledCluesListColumn = styled.ul`

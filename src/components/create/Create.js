@@ -26,31 +26,33 @@ class Create extends Component {
 			activeCell: null,
 			activeClueCells: null,
             isAcross: true,
-            blankMode: false,
+			blankMode: false,
+			symmetricMode: true,
 			labels: [],
 			loading: true,
 			finished: false,
-			saveModalOpen: false,
-			loadModalOpen: false,
-			printModalOpen: false,
+			openModalType: "",
 			puzzleName: null,
 			puzzleSaved: false,
 			dateCreated: "",
 			savedPuzzles: {}
         }
 		
-		this.setupNewPuzzle			 = this.setupNewPuzzle.bind(this);
-		this.handleCellClick         = this.handleCellClick.bind(this);
-		this.handleClueClick         = this.handleClueClick.bind(this);
-		this.handleClueInput         = this.handleClueInput.bind(this);
-        this.handleKeyDown           = this.handleKeyDown.bind(this);
-        this.handleBlankClick        = this.handleBlankClick.bind(this);
-		this.handleSaveClick         = this.handleSaveClick.bind(this);
-		this.handleLoadClick         = this.handleLoadClick.bind(this);
-		this.handlePrintClick         = this.handlePrintClick.bind(this);
+		this.setupNewPuzzle = this.setupNewPuzzle.bind(this);
+		this.handleCellClick = this.handleCellClick.bind(this);
+		this.handleCluesClearClick = this.handleCluesClearClick.bind(this);
+		this.handleClueClick = this.handleClueClick.bind(this);
+		this.handleClueInput = this.handleClueInput.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleBlankClick = this.handleBlankClick.bind(this);
+		this.handleSaveClick = this.handleSaveClick.bind(this);
+		this.handleLoadClick = this.handleLoadClick.bind(this);
+		this.handlePrintClick = this.handlePrintClick.bind(this);
+		this.handleHelpClick = this.handleHelpClick.bind(this);
 		this.handlePuzzleDeleteClick = this.handlePuzzleDeleteClick.bind(this);
-		this.savePuzzle				 = this.savePuzzle.bind(this);
-		this.handleModalClose	 	 = this.handleModalClose.bind(this);
+		this.handleGridSizeChange = this.handleGridSizeChange.bind(this);
+		this.savePuzzle = this.savePuzzle.bind(this);
+		this.handleModalClose = this.handleModalClose.bind(this);
 	}
 
 	componentDidMount() {
@@ -110,7 +112,7 @@ class Create extends Component {
 		this.setState({
 			puzzleName: name,
 			puzzleSaved: true,
-			saveModalOpen: false
+			openModalType: ""
 		}, () => {
 			let stateCopy = Object.assign({}, this.state);
 			// saved puzzles is tracked outside of individual puzzle's state
@@ -136,7 +138,7 @@ class Create extends Component {
 	loadPuzzle(name) {
 		this.setState({
 			loading: true,
-			loadModalOpen: false
+			openModalType: ""
 		}, () => {
 			setTimeout(() => {
 				const loadedPuzzle = this.state.savedPuzzles[name];
@@ -149,14 +151,13 @@ class Create extends Component {
 	}
 
 	handleKeyDown(e) {
-		if (this.state.loading || this.state.loadModalOpen 
-			|| this.state.saveModalOpen || this.state.printModalOpen 
-			|| document.activeElement.tagName === "TEXTAREA") {
+		// ignore loading, modal open, clue input
+		if (this.state.loading || this.state.openModalType !== "" || document.activeElement.tagName === "TEXTAREA") {
 			return;
 		}
 
-		// ignore meta keys
-		if (document.activeElement.tagName === "TEXTAREA" && [32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+		// ignore meta keys 
+		if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
 			e.preventDefault();
 	    }
 
@@ -284,12 +285,21 @@ class Create extends Component {
     }
     
     handleBlankChange(cell) {
-        let newGrid = this.state.grid.slice();
+		let newGrid = this.state.grid.slice();
+		const symmetricCell = this.state.symmetricMode ? this.state.grid.length - 1 - cell : null;
+		
         if (this.state.grid[cell] === false) {
-            newGrid[cell] = null;
+			newGrid[cell] = null;
+			if (symmetricCell !== null) {
+				newGrid[symmetricCell] = null;
+			}
         } else {
-            newGrid[cell] = false;
-        }
+			newGrid[cell] = false;
+			if (symmetricCell !== null) {
+				newGrid[symmetricCell] = false;
+			}
+		}
+		
 		const newClues = clueUtils.buildCreateClues(newGrid, this.state.rowLength, this.state.clues);
 		const newActiveClueCells = gridUtils.findActiveClueCells(this.state.activeCell, this.state.isAcross, newGrid, this.state.rowLength);
         const newLabels = gridUtils.makeLabels(newClues);
@@ -333,10 +343,17 @@ class Create extends Component {
 		});
 	}
 
-	handleClearClick(e) {
-		const newGrid = this.state.grid.slice().map(char => char ? null : char);
+	handleCluesClearClick(label) {
+		const clueType = label[0].toLowerCase();
+		let newClues = Object.assign({}, this.state.clues);
+		Object.keys(newClues).map((clue) => {
+			if (clue.toLowerCase().indexOf(clueType) > 0) {
+				newClues[clue].clue = "";
+			}
+		});
 		this.setState({
-			grid: newGrid
+			clues: newClues, 
+			puzzleSaved: false
 		});
     }
     
@@ -347,7 +364,7 @@ class Create extends Component {
 	handleSaveClick(name, shouldEdit) {
 		// edit puzzle name
 		if (shouldEdit) {
-			this.setState({saveModalOpen: true});
+			this.setState({openModalType: "save"});
 			return;
 		}
 
@@ -359,17 +376,17 @@ class Create extends Component {
 			this.savePuzzle(this.state.puzzleName);
 		} else {
 			// dont have name yet
-			this.setState({saveModalOpen: true});
+			this.setState({openModalType: "save"});
 		}
 	}
 
 	handleLoadClick(name, shouldClose = false) {
 		if (shouldClose) {
-			this.setState({loadModalOpen: false});
+			this.setState({openModalType: ""});
 		} else if (name != null) {
 			this.loadPuzzle(name);
 		} else {
-			this.setState({loadModalOpen: true});
+			this.setState({openModalType: "load"});
 		}
 	}
 
@@ -377,7 +394,7 @@ class Create extends Component {
 		let newSavedPuzzles = Object.assign({}, this.state.savedPuzzles);
 		delete newSavedPuzzles[name];
 		if (!Object.keys(newSavedPuzzles).some(key => key !== this.state.puzzleName)) {
-			this.setState({loadModalOpen: false}, () => {
+			this.setState({openModalType: ""}, () => {
 				this.refreshSavedPuzzles(newSavedPuzzles);
 			});
 		} else {
@@ -385,15 +402,32 @@ class Create extends Component {
 		}
 	}
 
-	handlePrintClick(e) {
-		this.setState({printModalOpen: true})
+	handlePrintClick() {
+		this.setState({openModalType: "print"});
 	}
 
-	handleModalClose(e) {
+	handleHelpClick() {
+		this.setState({openModalType: "help"});
+	}
+
+	handleModalClose() {
+		this.setState({openModalType: ""});
+	}
+
+	handleGridSizeChange(e) {
+		const newRowLength = Number(e.target.value);
+		const newGrid = gridUtils.resizeGrid(newRowLength, this.state.rowLength, this.state.grid);
+		const newClues = clueUtils.buildCreateClues(newGrid, newRowLength, this.state.clues);
 		this.setState({
-			saveModalOpen: false,
-			loadModalOpen: false,
-			printModalOpen: false
+			rowLength: newRowLength,
+			grid: newGrid,
+			clues: newClues,
+			labels: gridUtils.makeLabels(newClues),
+			activeCell: gridUtils.findFirstActiveCells(newGrid, this.state.isAcross, newRowLength)[0],
+			activeClueCells: gridUtils.findFirstActiveCells(newGrid, this.state.isAcross, newRowLength)[1],
+			activeClue: clueUtils.findFirstActiveClues(true, newClues),
+			altDirectionActiveClue: clueUtils.findFirstActiveClues(false, newClues),
+			puzzleSaved: false
 		});
 	}
 
@@ -438,7 +472,11 @@ class Create extends Component {
 			(<BodyContainer>
 		    	<GridHalf>
 					<GridHalfRail>
-						<PuzzleHeader puzzleName={this.state.puzzleName} handleEditClick={this.handleSaveClick} />
+						<PuzzleHeader 
+							puzzleName={this.state.puzzleName} 
+							gridSize={this.state.rowLength}
+							handleEditClick={this.handleSaveClick}
+							handleGridSizeChange={this.handleGridSizeChange} />
 						<ClueBanner 
 							mode="create"
 							label={Object.keys(this.state.activeClue)[0]}
@@ -462,6 +500,7 @@ class Create extends Component {
 						activeClue={this.state.activeClue}
 						altDirectionActiveClue={this.state.altDirectionActiveClue}
 						greyedClues={this.state.greyedClues}
+						handleClearClick={this.handleCluesClearClick}
 						handleClueClick={this.handleClueClick}
 						handleClueInput={this.handleClueInput} />
 	     		</CluesHalf>
@@ -469,7 +508,7 @@ class Create extends Component {
 
 		return (
 			<Fragment>
-				<StyledCreate blurred={this.state.saveModalOpen || this.state.loadModalOpen || this.state.printModalOpen}>
+				<StyledCreate blurred={this.state.openModalType !== ""}>
 					<NavContainer>
 						<NavWrapper
 							mode="create"
@@ -477,25 +516,24 @@ class Create extends Component {
 							puzzleName={this.state.puzzleName}
 							savedPuzzles={this.state.savedPuzzles}
 							toggleSidebarOpen={this.props.toggleSidebarOpen}
-							handleClearClick={this.handleClearClick}
 							handleBlankClick={this.handleBlankClick}
 							handleSaveClick={this.handleSaveClick}
 							handleLoadClick={this.handleLoadClick} 
 							handlePrintClick={this.handlePrintClick}
+							handleHelpClick={this.handleHelpClick}
 							handleNewClick={this.setupNewPuzzle} />
 					</NavContainer>
 					{body}
 				</StyledCreate> 
 
-				{(this.state.saveModalOpen || this.state.loadModalOpen || this.state.printModalOpen) && 
+				{(this.state.openModalType !== "") && 
 					<CreateModal 
 						grid={this.state.grid}
+						rowLength={this.state.rowLength}
 						labels={this.state.labels}
 						clues={this.state.clues}
 						savedPuzzles={this.state.savedPuzzles}
-						saveModalOpen={this.state.saveModalOpen}
-						loadModalOpen={this.state.loadModalOpen}
-						printModalOpen={this.state.printModalOpen}
+						openModalType={this.state.openModalType}
 						handleModalClose={this.handleModalClose}
 						handleSaveClick={this.handleSaveClick}
 						handleLoadClick={this.handleLoadClick}

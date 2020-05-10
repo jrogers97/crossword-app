@@ -196,7 +196,7 @@ const StyledButton = styled.button`
 	border: none;
 	color: black;
 	padding: 0 18px;
-	background-color: ${props => props.isActive ? "rgba(0,0,0,0.1)" : "initial"};
+	background-color: ${props => props.isActive ? "rgba(0,0,0,0.1)" : "transparent"};
 	&:hover {
 		cursor: pointer;
 		background-color: rgba(0,0,0,0.1);
@@ -219,6 +219,7 @@ const StyledButtonSecondary = styled.button`
 	border: none;
 	height: 100%;
 	padding: 1px 13px;
+	background-color: transparent;
 	&:hover {
 		cursor: pointer;
 	}

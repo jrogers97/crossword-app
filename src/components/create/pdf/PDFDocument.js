@@ -1,14 +1,38 @@
 import React from 'react';
-import { Page, Text, View, Document} from '@react-pdf/renderer';
-import styles from './PDFStyles';
+import { Page, Text, View, Document, StyleSheet} from '@react-pdf/renderer';
+import makePDFStyles from './PDFStyles';
 
-const PDFDocument = ({grid, labels, clues, name}) => {
+const PDFDocument = ({grid, rowLength, labels, clues, name}) => {
+    const [acrossClues, downClues] = separateClues(clues);
+
+    const styles = makePDFStyles(rowLength);
+    console.log(styles);
+
     const getLabel = (idx) => {
         const label = labels.find(l => l[0] === idx);
         return label ? label[1] : "";
     };
 
-    const [acrossClues, downClues] = separateClues(clues);
+    const getCellStyle = (cell, idx) => {
+        let borderStyle = {};
+        if (idx === (rowLength * rowLength) - 1) {
+            // last cell
+            borderStyle = {...styles.cellBorderBottom, ...styles.cellBorderRight};
+        } else if (idx >= rowLength * (rowLength - 1)) {
+            // bottom row
+            borderStyle = styles.cellBorderBottom;
+        } else if ((idx + 1) % rowLength === 0) {
+            // right-most column
+            borderStyle = styles.cellBorderRight;
+        }
+    
+        let backgroundStyle = {};
+        if (cell === false) {
+            backgroundStyle = styles.cellDisabled
+        }
+    
+        return {...styles.cell, ...borderStyle, ...backgroundStyle};
+    };
 
     return (
         <Document>
@@ -48,27 +72,6 @@ const PDFDocument = ({grid, labels, clues, name}) => {
             </Page>
         </Document>
     );
-};
-
-const getCellStyle = (cell, idx) => {
-    let borderStyle = {};
-    if (idx === 224) {
-        // last cell
-        borderStyle = {...styles.cellBorderBottom, ...styles.cellBorderRight};
-    } else if (idx >= 210) {
-        // bottom row
-        borderStyle = styles.cellBorderBottom;
-    } else if ((idx + 1) % 15 === 0) {
-        // right-most column
-        borderStyle = styles.cellBorderRight;
-    }
-
-    let backgroundStyle = {};
-    if (cell === false) {
-        backgroundStyle = styles.cellDisabled
-    }
-
-    return {...styles.cell, ...borderStyle, ...backgroundStyle};
 };
 
 const separateClues = (clues) => {

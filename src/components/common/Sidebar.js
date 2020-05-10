@@ -124,7 +124,7 @@ const Overlay = styled.div`
     top: 0;
     left: 0;
     z-index: 2;
-    background-color: rgba(0,0,0);
+    background-color: rgb(0,0,0);
     transition: visibility 0s, opacity 300ms ease-in-out;
     opacity: ${props => props.open ? "0.8" : "0"};
     visibility: ${props => props.open ? "visible" : "hidden"};

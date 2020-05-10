@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import trashIcon from '../../icon/trash.svg';
+import trashIcon from '../../../icon/trash.svg';
 
 const LoadModalContent = ({puzzleName, savedPuzzles, handleLoadClick, handleDeleteClick}) => {
     return (

@@ -6,6 +6,7 @@ import loadIcon from '../../icon/load.svg';
 import checkIcon from '../../icon/check.svg';
 import plusIcon from '../../icon/plus-circled.svg';
 import printIcon from '../../icon/download.svg';
+import helpIcon from '../../icon/question.svg';
 
 const CreateNav = ({
     savedPuzzles,
@@ -14,6 +15,7 @@ const CreateNav = ({
     handlePrintClick,
     handleSaveClick,
     handleNewClick,
+    handleHelpClick,
     puzzleSaved,
     puzzleName
 }) => {
@@ -29,6 +31,12 @@ const CreateNav = ({
             <ButtonText> New Puzzle </ButtonText>
         </Button>
         <ButtonSet>
+            <Button onClick={handleHelpClick}>
+                <HelpIcon 
+                    src={helpIcon}
+                    alt="Help" />
+            </Button>
+
             <BlankButton
                 isActive={blankButtonActive}
                 onClick={(e) => {
@@ -81,6 +89,7 @@ const Button = styled(({saved, ...rest}) => <button {...rest}/>)`
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     border: none;
     height: 100%;
     width: 80px;
@@ -121,6 +130,11 @@ const BlankIcon = styled(({isActive, ...rest}) => <ButtonIcon {...rest} />)`
 
 const BlankText = styled(({isActive, ...rest}) => <ButtonText {...rest} />)`
     color: ${props => props.isActive ? "white" : "#555555"};
+`;
+
+const HelpIcon = styled(ButtonIcon)`
+    height: 16px;
+    width: 16px;
 `;
 
 export default CreateNav;

@@ -21,7 +21,7 @@ const CluesListItem = React.memo(({clueNum, clueText, isActive, isAltDirectionAc
 				{mode === "create" 
 					? <ClueTextInput 
 						placeholder="Add clue"
-						defaultValue={clueText}
+						value={clueText}
 						isActive={isActive}
 						data-clue-num={clueNum}
 						onChange={handleClueInput} />
@@ -76,6 +76,7 @@ const ClueTextInput = styled(({isActive, ...rest}) => <TextareaAutosize {...rest
 		outline: none;
 	}
 	&::placeholder {
+		color: #888;
 		opacity: ${props => props.isActive ? "1" : "0"};
 	}
 `;

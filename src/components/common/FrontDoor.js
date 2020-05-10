@@ -8,7 +8,7 @@ const FrontDoor = () => {
     return (
         <StyledFrontDoor>
             <CenterRail>
-                <Header>Cross Those Words</Header>
+                <Header>Get Ready to Cross Those Words</Header>
                 <Links>
                     <StyledLink to={"/solve"}>
                         <LinkItem>
@@ -22,7 +22,7 @@ const FrontDoor = () => {
                         <LinkItem>
                             <Icon src={plusIcon} />
                             <Text>Create</Text>
-                            <Subtext>Make your own puzzle to share with friends!</Subtext>
+                            <Subtext>Make and download your very own puzzle!</Subtext>
                         </LinkItem>
                     </StyledLink>
                 </Links>

@@ -3,6 +3,42 @@ import styled from 'styled-components';
 
 import CluesListColumn from './CluesListColumn';
 
+const Clues = ({
+	clues, 
+	activeClue, 
+	altDirectionActiveClue, 
+	greyedClues, 
+	handleClearClick,
+	handleClueClick, 
+	handleClueInput, 
+	mode
+}) => {
+	return (
+		<CluesContainer>
+			<CluesListColumn 
+				mode={mode}
+				clues={separateAcrossDownClues(clues)[0]} 
+				greyedClues={greyedClues ? separateAcrossDownGreyedClues(greyedClues)[0] : []}
+				activeClue={activeClue}
+				altDirectionActiveClue={altDirectionActiveClue}
+				handleClearClick={handleClearClick}
+				handleClueClick={handleClueClick}
+				handleClueInput={handleClueInput}
+				label="Across" />
+			<CluesListColumn 
+				mode={mode}
+				clues={separateAcrossDownClues(clues)[1]} 
+				greyedClues={greyedClues ? separateAcrossDownGreyedClues(greyedClues)[1] : []}
+				activeClue={activeClue}
+				altDirectionActiveClue={altDirectionActiveClue}
+				handleClearClick={handleClearClick}
+				handleClueClick={handleClueClick}
+				handleClueInput={handleClueInput}
+				label="Down" />
+		</CluesContainer>
+	);
+};
+
 const separateAcrossDownClues = (clues) => {
 	let separatedClues = [];
 	["a", "d"].forEach(clueType => {
@@ -17,7 +53,7 @@ const separateAcrossDownClues = (clues) => {
 	});
 
 	return separatedClues;
-}
+};
 
 const separateAcrossDownGreyedClues = (greyedClues) => {
 	let separatedClues = [];
@@ -26,32 +62,7 @@ const separateAcrossDownGreyedClues = (greyedClues) => {
 	});
 
 	return separatedClues;
-}
-
-const Clues = ({clues, grid, activeClue, altDirectionActiveClue, greyedClues, handleClueClick, handleClueInput, mode}) => {
-	return (
-		<CluesContainer>
-			<CluesListColumn 
-				mode={mode}
-				clues={separateAcrossDownClues(clues)[0]} 
-				greyedClues={greyedClues ? separateAcrossDownGreyedClues(greyedClues)[0] : []}
-				activeClue={activeClue}
-				altDirectionActiveClue={altDirectionActiveClue}
-				handleClueClick={handleClueClick}
-				handleClueInput={handleClueInput}
-				label="Across" />
-			<CluesListColumn 
-				mode={mode}
-				clues={separateAcrossDownClues(clues)[1]} 
-				greyedClues={greyedClues ? separateAcrossDownGreyedClues(greyedClues)[1] : []}
-				activeClue={activeClue}
-				altDirectionActiveClue={altDirectionActiveClue}
-				handleClueClick={handleClueClick}
-				handleClueInput={handleClueInput}
-				label="Down" />
-		</CluesContainer>
-	);
-}
+};
 
 const CluesContainer = styled.div`
 	min-height: 540px;

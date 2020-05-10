@@ -62,6 +62,9 @@ const ClueBannerTextInput = styled(TextareaAutosize)`
 	&:focus {
 		outline: none;
 	}
+	&::placeholder {
+		color: #888;
+	}
 `;
 
 export default ClueBanner;

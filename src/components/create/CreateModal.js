@@ -1,17 +1,17 @@
 import React, {useEffect} from 'react';
 import styled from 'styled-components';
-import LoadModalContent from './LoadModalContent';
-import SaveModalContent from './SaveModalContent';
-import PrintModalContent from './PrintModalContent';
+import LoadModalContent from './modals/LoadModalContent';
+import SaveModalContent from './modals/SaveModalContent';
+import PrintModalContent from './modals/PrintModalContent';
+import HelpModalContent from './modals/HelpModalContent';
 import xIcon from '../../icon/x.svg';
 
 const CreateModal = ({
     grid,
+    rowLength,
     labels,
-	clues,
-    saveModalOpen, 
-    loadModalOpen, 
-    printModalOpen,
+    clues,
+    openModalType,
     handleModalClose, 
     handleSaveClick, 
     handleLoadClick, 
@@ -31,19 +31,19 @@ const CreateModal = ({
     }, []);
 
     return (
-        <ModalOverlay hidden={!saveModalOpen && !loadModalOpen && !printModalOpen} id="modal-overlay">
+        <ModalOverlay hidden={openModalType === ""} id="modal-overlay">
             <ModalContent>
                 <ModalCloseButton onClick={handleModalClose}>
                     <ModalCloseIcon src={xIcon} alt="Close" />
                 </ModalCloseButton>
                 
-                {saveModalOpen && 
+                {openModalType === "save" && 
                     <SaveModalContent 
                         puzzleName={puzzleName}
                         handleSaveClick={handleSaveClick} />
                 }
 
-                {loadModalOpen && 
+                {openModalType === "load" && 
                     <LoadModalContent 
                         puzzleName={puzzleName}
                         savedPuzzles={savedPuzzles}
@@ -51,14 +51,18 @@ const CreateModal = ({
                         handleDeleteClick={handlePuzzleDeleteClick} />
                 }
 
-                {printModalOpen &&
+                {openModalType === "print" &&
                     <PrintModalContent
                         grid={grid}
+                        rowLength={rowLength}
                         labels={labels}
                         clues={clues}
                         puzzleName={puzzleName}
                         handleModalClose={handleModalClose} />
                 }
+
+                {openModalType === "help" &&
+                    <HelpModalContent />}
             </ModalContent>
         </ModalOverlay>
     );
