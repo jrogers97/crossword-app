@@ -26,9 +26,8 @@ const CreateModal = ({
             }
         }
         window.addEventListener("click", handleClick);
-        // cleanup
         return () => window.removeEventListener("click", handleClick);
-    }, []);
+    }, [handleModalClose]);
 
     return (
         <ModalOverlay hidden={openModalType === ""} id="modal-overlay">

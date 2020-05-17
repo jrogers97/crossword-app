@@ -20,7 +20,7 @@ const CluesListColumn = ({
 	useEffect(() => {
 		listColumnNode.current = document.querySelector(`#${label}`);
 		listItems.current = Array.from(document.querySelectorAll(`#${label} .clues-list-item`));
-	}, []);
+	}, [label]);
 
 	useEffect(() => {
 		// get top offset of active clue list item, scroll to it

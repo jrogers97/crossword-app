@@ -27,7 +27,7 @@ class Create extends Component {
 			activeClueCells: null,
             isAcross: true,
 			blankMode: false,
-			symmetricMode: true,
+			blankModeType: "regular",
 			labels: [],
 			loading: true,
 			finished: false,
@@ -45,6 +45,7 @@ class Create extends Component {
 		this.handleClueInput = this.handleClueInput.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleBlankClick = this.handleBlankClick.bind(this);
+        this.handleBlankTypeClick = this.handleBlankTypeClick.bind(this);
 		this.handleSaveClick = this.handleSaveClick.bind(this);
 		this.handleLoadClick = this.handleLoadClick.bind(this);
 		this.handlePrintClick = this.handlePrintClick.bind(this);
@@ -286,7 +287,7 @@ class Create extends Component {
     
     handleBlankChange(cell) {
 		let newGrid = this.state.grid.slice();
-		const symmetricCell = this.state.symmetricMode ? this.state.grid.length - 1 - cell : null;
+		const symmetricCell = this.state.blankModeType === "mirrored" ? this.state.grid.length - 1 - cell : null;
 		
         if (this.state.grid[cell] === false) {
 			newGrid[cell] = null;
@@ -346,7 +347,7 @@ class Create extends Component {
 	handleCluesClearClick(label) {
 		const clueType = label[0].toLowerCase();
 		let newClues = Object.assign({}, this.state.clues);
-		Object.keys(newClues).map((clue) => {
+		Object.keys(newClues).forEach((clue) => {
 			if (clue.toLowerCase().indexOf(clueType) > 0) {
 				newClues[clue].clue = "";
 			}
@@ -359,7 +360,11 @@ class Create extends Component {
     
     handleBlankClick(e) {
         this.setState({blankMode: !this.state.blankMode});
-    }
+	}
+	
+	handleBlankTypeClick(type) {
+		this.setState({blankModeType: type});
+	}
 
 	handleSaveClick(name, shouldEdit) {
 		// edit puzzle name
@@ -512,11 +517,14 @@ class Create extends Component {
 					<NavContainer>
 						<NavWrapper
 							mode="create"
+							blankMode={this.state.blankMode}
+							blankModeType={this.state.blankModeType}
 							puzzleSaved={this.state.puzzleSaved}
 							puzzleName={this.state.puzzleName}
 							savedPuzzles={this.state.savedPuzzles}
 							toggleSidebarOpen={this.props.toggleSidebarOpen}
 							handleBlankClick={this.handleBlankClick}
+							handleEraserTypeClick={this.handleBlankTypeClick}
 							handleSaveClick={this.handleSaveClick}
 							handleLoadClick={this.handleLoadClick} 
 							handlePrintClick={this.handlePrintClick}

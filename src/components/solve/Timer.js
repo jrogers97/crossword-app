@@ -9,6 +9,7 @@ const Timer = ({
     hasStarted,
     paused,
     finished,
+    timerRef,
     handleTimerPause,
     handleTimerUpdate
 }) => {
@@ -19,6 +20,7 @@ const Timer = ({
         setIsRunning(!paused && !correct && hasStarted);
         // pass time back up to Solve so Modal can use the current timer value
         handleTimerUpdate(time);
+        // eslint-disable-next-line
     }, [paused, correct, hasStarted, finished]);
 
     useEffect(() => {
@@ -33,6 +35,10 @@ const Timer = ({
             return () => clearInterval(intervalId);
         }
     }, [isRunning]);
+
+    useEffect(() => {
+        timerRef.current = time;
+    }, [time, timerRef]);
 
     return (
         <StyledTimer>

@@ -157,13 +157,12 @@ export const getPrevCellState = (
 
 		if (incorrectCells) {
 			filteredIncorrectCells = incorrectCells.filter(cell => {
-				// return activeCell !== cell && (!prevCell || prevCell !== cell);
 				return activeCell !== cell && (stayOnCell || newActiveCell !== cell);
 			});
 		}
 	}
 
-	const newGreyedClues = greyedClues ? getGreyedClues(newGrid, clues, greyedClues, stayOnCell ? activeCell : newActiveCell, 
+	const newGreyedClues = greyedClues && shouldDelete ? getGreyedClues(newGrid, clues, greyedClues, stayOnCell ? activeCell : newActiveCell, 
 		false, isAcross, rowLength) : null;
 
 	// use different cell to find active clue depending on if we moved or stayed cells

@@ -66,6 +66,7 @@ const PuzzleInfo = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    max-width: 300px;
 `;
 
 const PuzzleName = styled.span`

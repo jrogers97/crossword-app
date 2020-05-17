@@ -18,6 +18,7 @@ const SolveNav = ({
 	onCheckboxChange,
 	progressSaved,
 	timerValue,
+	timerRef,
 	hasStarted,
 	paused,
 	finished,
@@ -26,7 +27,6 @@ const SolveNav = ({
 	const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 	const [activeDropdown, setActiveDropdown] = useState("");
 	const [notesActive, setNotesActive] = useState(notesMode);
-	let resizeId;
 
 	const daysDropdown = useRef(null);
 	const checkDropdown = useRef(null);
@@ -45,11 +45,6 @@ const SolveNav = ({
 			&& !e.target.className.includes("days-dropdown")) {
 			setActiveDropdown("");
 		}
-	};
-
-	const handleResize = () => {
-		clearTimeout(resizeId);
-		resizeId = setTimeout(setDropdownPositions, 500);
 	};
 
 	const handleNavButtonClick = (e) => {
@@ -86,6 +81,12 @@ const SolveNav = ({
 	};
 
 	useEffect(() => {
+		let resizeId;
+		const handleResize = () => {
+			clearTimeout(resizeId);
+			resizeId = setTimeout(setDropdownPositions, 500);
+		};
+
 		window.addEventListener("click", closeDropdowns);
 		window.addEventListener("resize", handleResize);
 
@@ -116,6 +117,7 @@ const SolveNav = ({
 					hasStarted={hasStarted}
 					paused={paused} 
 					finished={finished}
+					timerRef={timerRef}
 					handleTimerPause={handleTimerPause}
 					handleTimerUpdate={handleTimerUpdate} />
 					

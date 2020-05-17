@@ -1,26 +1,8 @@
 import axios from 'axios';
 
 export const fetchRandomData = (ignoredDays) => {
-	const ignoredDaysNumbers = ignoredDays.map(day => {
-		switch (day) {
-			case "sunday": 
-				return 0;
-			case "monday": 
-				return 1;
-			case "tuesday": 
-				return 2;
-			case "wednesday": 
-				return 3;
-			case "thursday": 
-				return 4;
-			case "friday": 
-				return 5;
-			case "saturday": 
-				return 6;
-			default:
-				return 0;
-		}
-	});
+	const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+	const ignoredDaysNumbers = ignoredDays.map(day => days.indexOf(day));
 
 	let [year, month, day] = makeRandomDate(ignoredDaysNumbers);
 
@@ -47,70 +29,3 @@ export const makeRandomDate = (ignoreDays) => {
 
 	return [year.toString(), monthStr, dayStr];
 }
-
-// export const makeFinishedGrid = (grid) => {
-// 	return grid.map(char => char === "." ? false : char.toUpperCase());
-// }
-
-// export const makeClues = (clues, gridNums) => {
-// 	let cluesMap = {};
-// 	["across", "down"].forEach(dir => {
-// 		clues[dir].forEach(clue => {
-// 			const [clueNum, clueText] = splitKeepRemainder(clue, ". ", 1);
-// 			const fullClueNum = clueNum + (dir === "across" ? "A" : "D");
-
-// 			const startCell = gridNums.indexOf(parseInt(clueNum.replace(/\D+/g, '')));
-
-// 			cluesMap[fullClueNum] = {
-// 				"startCell": startCell,
-// 				"clue": clueText
-// 					.replace("&amp;", "&")
-// 					.replace("&reg;", "®")
-// 			};
-// 		});
-// 	});
-
-// 	return cluesMap;
-// }
-
-// export const splitKeepRemainder = (str, separator, limit) => {
-// 	str = str.split(separator);
-// 	if (str.length > limit) {
-// 		var ret = str.splice(0, limit);
-// 		ret.push(str.join(separator));
-
-// 		return ret;
-// 	}
-
-// 	return str;
-// }
-
-// export const buildCreateClues = (grid, rowLength, oldClues = {}) => {
-// 	let cluesMap = {};
-// 	let clueLabel = 1;
-// 	grid.forEach((cell, idx) => {
-// 		if (cell !== false) {
-// 			let addedClue = false;
-// 			if (idx % rowLength === 0 || grid[idx - 1] === false) {
-// 				const acrossLabel = `${clueLabel}A`;
-// 				cluesMap[acrossLabel] = {
-// 					startCell: idx,
-// 					clue: oldClues.hasOwnProperty(acrossLabel) ? oldClues[acrossLabel].clue : ""
-// 				};
-// 				addedClue = true;
-// 			}
-// 			if (idx < rowLength || grid[idx - rowLength] === false) {
-// 				const downLabel = `${clueLabel}D`;
-// 				cluesMap[downLabel] = {
-// 					startCell: idx,
-// 					clue: oldClues.hasOwnProperty(downLabel) ? oldClues[downLabel].clue : ""
-// 				};
-// 				addedClue = true;
-// 			}
-// 			if (addedClue) {
-// 				clueLabel++;
-// 			}
-// 		}
-// 	});
-// 	return cluesMap;
-// }

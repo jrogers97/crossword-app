@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, createRef } from 'react';
 import smoothscroll from 'smoothscroll-polyfill';
 import ClipLoader from 'react-spinners/ClipLoader';
 import styled from 'styled-components';
@@ -61,6 +61,8 @@ class Solve extends Component {
 		this.handleNotesClick = this.handleNotesClick.bind(this);
 		this.handleModalButtonClick = this.handleModalButtonClick.bind(this);
 		this.saveState = this.saveState.bind(this);
+
+		this.timerState = createRef();
 	}
 
 	componentDidMount() {
@@ -75,7 +77,7 @@ class Solve extends Component {
 				storedState.progressSaved = true;
 				storedState.paused = true;
 			
-				console.log(storedState);
+				console.log('stored state: ', storedState);
 				self.setState(storedState);
 			} else {
 				self.setupPuzzle()
@@ -144,10 +146,11 @@ class Solve extends Component {
 
 	// save state to local storage
 	saveState() {
-		if (!this.state.progressSaved) {
+		const newTimerValue = this.timerState.current;
+		this.setState({timerValue: newTimerValue}, () => {
 			localStorage.setItem('solveState', JSON.stringify(this.state));
 			this.setState({progressSaved: true});
-		}
+		});
 	}
 
 	handleKeyDown(e) {
@@ -333,7 +336,7 @@ class Solve extends Component {
 		// fake loading time
 		setTimeout(() => {
 			self.setupPuzzle()
-		}, 1); 
+		}, 400); 
 	}
 
 	handleCheckClick(type) {
@@ -463,7 +466,9 @@ class Solve extends Component {
 	}
 
 	handleTimerUpdate(timerValue) {
-		this.setState({timerValue: timerValue});
+		if (timerValue && this.state.hasStarted) {
+			this.setState({timerValue: timerValue});
+		}
 	}
 
 	// for days difficulty dropdown
@@ -604,6 +609,7 @@ class Solve extends Component {
 							onCheckboxChange={this.handleCheckboxChange}
 							progressSaved={this.state.progressSaved}
 							timerValue={this.state.timerValue}
+							timerRef={this.timerState}
 							hasStarted={this.state.hasStarted}
 							finished={this.state.finished}
 							paused={this.state.paused}

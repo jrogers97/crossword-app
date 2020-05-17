@@ -115,7 +115,7 @@ const GridCellText = styled.span`
 	text-align: center;
 	font-weight: 600;
 	padding-top: 7px;
-	font-size: ${props => props.rowLength * -1.2 + 39}px;
+	font-size: ${props => props.rowLength * -1.2 + 38.5}px;
 	color: ${props => {
 		if (props.correct) {
 			return "#2860D8";

@@ -22,7 +22,7 @@ const PrintModalContent = ({
             }
             setTimeout(handleModalClose, 200);
         }, 400);
-    }, []);
+    }, [handleModalClose]);
 
     return (
         <Wrapper>

@@ -11,7 +11,7 @@ const getModalText = (hasStarted, paused, timerValue, finished, correct) => {
 		if (!correct) {
 			return "Almost there! One or more squares are incorrect.";
 		} else {
-			return `You finished in ${formatTime(timerValue)}!`;
+			return `Congrats! You finished in ${formatTime(timerValue)}!`;
 		}
 	} 
 }

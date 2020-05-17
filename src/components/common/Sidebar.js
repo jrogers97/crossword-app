@@ -22,7 +22,7 @@ const Sidebar = ({
 
         // clean up
         return () => window.removeEventListener("click", handler);
-    }, [open]);
+    }, [open, toggleSidebarOpen]);
 
     const pages = [
         ["/solve", "Solve", notesIcon, activePage === "solve"], 

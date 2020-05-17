@@ -8,13 +8,13 @@ const FrontDoor = () => {
     return (
         <StyledFrontDoor>
             <CenterRail>
-                <Header>Get Ready to Cross Those Words</Header>
+                <Header>Get Ready to <Highlight>Cross</Highlight> Those <Highlight>Words</Highlight></Header>
                 <Links>
                     <StyledLink to={"/solve"}>
                         <LinkItem>
                             <Icon src={notesIcon} />
                             <Text>Solve</Text>
-                            <Subtext>Work on New York Times puzzles from throughout history!</Subtext>
+                            <Subtext>Work on New York Times puzzles from the last 40 years!</Subtext>
                         </LinkItem>
                     </StyledLink>
 
@@ -58,14 +58,11 @@ const Header = styled.p`
     font-weight: bold;
     font-size: 40px;
     margin-bottom: 80px;
-    width: 50%;
     min-width: 520px;
-    @media(max-width: 1100px) {
-        width: 60%;
-    }
-    @media(max-width: 900px) {
-        width: 70%;
-    }
+`;
+
+const Highlight = styled.span`
+    color: #5ca3db;
 `;
 
 const Links = styled.div`
