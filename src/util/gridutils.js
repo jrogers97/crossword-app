@@ -76,7 +76,6 @@ export const getActiveCellsFromClue = (clueObj, grid, rowLength) => {
 		activeCell = activeClueCells[0];
 	}
 
-	// return [activeCell, activeClueCells, isAcross];
 	return {activeCell, activeClueCells, isAcross};
 }
 

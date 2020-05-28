@@ -77,12 +77,11 @@ class Solve extends Component {
 				storedState.progressSaved = true;
 				storedState.paused = true;
 			
-				console.log('stored state: ', storedState);
 				self.setState(storedState);
 			} else {
 				self.setupPuzzle()
 			}
-		}, 400);
+		}, 100);
 
 		document.addEventListener("keydown", this.handleKeyDown);
 		smoothscroll.polyfill();
@@ -101,7 +100,6 @@ class Solve extends Component {
 					&& ((response.data.size.cols === 15 && response.data.size.rows === 15)
 					|| (response.data.size.cols === 21 && response.data.size.rows === 21))
 					&& !gridUtils.isRebus(response.data.grid)) {
-					console.log(response.data);
 
 					const finishedGrid = gridUtils.makeFinishedGrid(response.data.grid);
 					const grid = finishedGrid.slice().map(char => char ? null : char);
@@ -140,8 +138,6 @@ class Solve extends Component {
 			.catch(error => {
 				self.setupPuzzle();
 			});
-
-		console.log(this.state);
 	}
 
 	// save state to local storage
@@ -336,7 +332,7 @@ class Solve extends Component {
 		// fake loading time
 		setTimeout(() => {
 			self.setupPuzzle()
-		}, 400); 
+		}, 100); 
 	}
 
 	handleCheckClick(type) {
@@ -445,7 +441,7 @@ class Solve extends Component {
 		}
 	}
 
-	handleClearClick(e) {
+	handleClearClick() {
 		const newGrid = this.state.finishedGrid.slice().map(char => char ? null : char);
 		this.setState({
 			grid: newGrid,
@@ -457,7 +453,7 @@ class Solve extends Component {
 		});
 	}
 
-	handleNotesClick(e) {
+	handleNotesClick() {
 		this.setState({notesMode: !this.state.notesMode});
 	}
 
@@ -539,10 +535,6 @@ class Solve extends Component {
 				correct: puzzleCorrect
 			});
 		}
-	}
-
-	shouldBlurBackground() {
-		return (this.state.paused || !this.state.hasStarted) && !this.state.loading;
 	}
 
 	render() {

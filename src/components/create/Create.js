@@ -62,7 +62,6 @@ class Create extends Component {
 		this.timeout = setTimeout(function() {
 			const createState = JSON.parse(localStorage.getItem('createState'));
 			if (createState) {
-				console.log(createState);
 				delete createState.blankMode;
 				self.setState(createState);
 			} else {
@@ -493,7 +492,8 @@ class Create extends Component {
 				     	    rowLength={this.state.rowLength} 
 				     	    activeCell={this.state.activeCell}
 				     	    activeClueCells={this.state.activeClueCells}
-				     	    handleCellClick={this.handleCellClick}
+							handleCellClick={this.handleCellClick}
+							blankMode={this.state.blankMode}
 				     	    labels={this.state.labels} />
 		     	    </GridHalfRail>
 	     		</GridHalf>

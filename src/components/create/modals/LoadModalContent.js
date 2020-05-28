@@ -7,7 +7,7 @@ const LoadModalContent = ({puzzleName, savedPuzzles, handleLoadClick, handleDele
         <StyledLoadModalContent>
             <Header> Your puzzles </Header>
             <PuzzleList>
-                {Object.keys(savedPuzzles).map((name, idx) => {
+                {Object.keys(savedPuzzles).reverse().map((name, idx) => {
                     return (
                         name !== puzzleName &&
                             <PuzzleListItem key={idx} onClick={() => handleLoadClick(name)}>
@@ -44,6 +44,8 @@ const PuzzleList = styled.ul`
     display: flex;
     flex-direction: column;
     list-style-type: none;
+    max-height: 380px;
+    overflow-y: scroll;
 `;
 
 const PuzzleListItem = styled.li`

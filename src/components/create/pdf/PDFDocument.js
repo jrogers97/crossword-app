@@ -4,10 +4,7 @@ import makePDFStyles from './PDFStyles';
 
 const PDFDocument = ({grid, rowLength, labels, clues, name}) => {
     const [acrossClues, downClues] = separateClues(clues);
-
     const styles = makePDFStyles(rowLength);
-    console.log(styles);
-
     const getLabel = (idx) => {
         const label = labels.find(l => l[0] === idx);
         return label ? label[1] : "";

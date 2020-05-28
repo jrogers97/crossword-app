@@ -6,7 +6,8 @@ export const fetchRandomData = (ignoredDays) => {
 
 	let [year, month, day] = makeRandomDate(ignoredDaysNumbers);
 
-	return axios.get(`https://raw.githubusercontent.com/doshea/nyt_crosswords/master/${year}/${month}/${day}.json`);
+	// return axios.get(`https://raw.githubusercontent.com/doshea/nyt_crosswords/master/${year}/${month}/${day}.json`);
+	return axios.get(`https://rawcdn.githack.com/doshea/nyt_crosswords/623e72e99b25a524c85b56bf832dd7cd8c2a34a9/${year}/${month}/${day}.json`);
 }
 
 export const makeRandomDate = (ignoreDays) => {

@@ -81,7 +81,7 @@ const CreateNav = ({
                 }
             }, 500);
         };
-        
+
         window.addEventListener('resize', handleResize);
         window.addEventListener('click', closeDropdown);
 
@@ -100,6 +100,7 @@ const CreateNav = ({
             window.removeEventListener("resize", handleResize);
             window.removeEventListener("click", closeDropdown);
         }
+        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {

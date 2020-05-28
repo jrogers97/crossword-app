@@ -12,10 +12,11 @@ const Grid = ({
 	noteCells,
 	labels, 
 	rowLength, 
+	blankMode,
 	handleCellClick
 }) => {
 	return (
-		<GridContainer>
+		<GridContainer shadow={blankMode}>
 			{[...Array(rowLength)].map((num, i) => 
 				<GridRow 
 					key={i} 
@@ -44,6 +45,8 @@ const GridContainer = styled.div`
 	height: 480px;
 	margin-bottom: 10px;
 	user-select: none;
+	box-shadow: ${props => props.shadow ? "0px 5px 6px rgba(0,0,0,0.6)" : "none"};
+	transition: box-shadow 0.2s ease-out;
 	@media (max-width: 1000px) {
 		height: 400px;
 	}
