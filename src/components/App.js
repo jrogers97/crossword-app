@@ -31,17 +31,17 @@ const App = () => {
             }
 
             <Switch>
-                <Route exact path="/">
+                <Route exact path={`${process.env.PUBLIC_URL}/`}>
                     <FrontDoor />
                 </Route>
 
-                <Route path="/solve">
+                <Route path={`${process.env.PUBLIC_URL}/solve`}>
                     <Solve 
                         toggleSidebarOpen={toggleSidebarOpen}
                         changeActivePage={changeActivePage} />
                 </Route>
 
-                <Route path="/create">
+                <Route path={`${process.env.PUBLIC_URL}/create`}>
                     <Create 
                         toggleSidebarOpen={toggleSidebarOpen}
                         changeActivePage={changeActivePage} />
