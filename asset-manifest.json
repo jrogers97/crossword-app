@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "/crossword-app/static/css/main.2fc20e45.chunk.css",
+    "main.js": "/crossword-app/static/js/main.72c643f9.chunk.js",
+    "main.js.map": "/crossword-app/static/js/main.72c643f9.chunk.js.map",
+    "runtime-main.js": "/crossword-app/static/js/runtime-main.8094cf9d.js",
+    "runtime-main.js.map": "/crossword-app/static/js/runtime-main.8094cf9d.js.map",
+    "static/js/2.6f716eb9.chunk.js": "/crossword-app/static/js/2.6f716eb9.chunk.js",
+    "static/js/2.6f716eb9.chunk.js.map": "/crossword-app/static/js/2.6f716eb9.chunk.js.map",
+    "index.html": "/crossword-app/index.html",
+    "precache-manifest.b95bfd224ecfdaa9d590752b61cbb19f.js": "/crossword-app/precache-manifest.b95bfd224ecfdaa9d590752b61cbb19f.js",
+    "service-worker.js": "/crossword-app/service-worker.js",
+    "static/css/main.2fc20e45.chunk.css.map": "/crossword-app/static/css/main.2fc20e45.chunk.css.map",
+    "static/media/check.svg": "/crossword-app/static/media/check.0d4e03c5.svg",
+    "static/media/chevron.svg": "/crossword-app/static/media/chevron.3fc89807.svg",
+    "static/media/download.svg": "/crossword-app/static/media/download.e48ed1de.svg",
+    "static/media/eraser.svg": "/crossword-app/static/media/eraser.815ad0f1.svg",
+    "static/media/flip.svg": "/crossword-app/static/media/flip.4af6e5b7.svg",
+    "static/media/load.svg": "/crossword-app/static/media/load.821bc33d.svg",
+    "static/media/menu.svg": "/crossword-app/static/media/menu.a450cc10.svg",
+    "static/media/pause.svg": "/crossword-app/static/media/pause.9c5f89be.svg",
+    "static/media/pencil-grey.svg": "/crossword-app/static/media/pencil-grey.7317c4ce.svg",
+    "static/media/pencil.svg": "/crossword-app/static/media/pencil.ae2808f5.svg",
+    "static/media/plus-circled.svg": "/crossword-app/static/media/plus-circled.1e71bac7.svg",
+    "static/media/plus.svg": "/crossword-app/static/media/plus.d0f5911d.svg",
+    "static/media/question.svg": "/crossword-app/static/media/question.2508df20.svg",
+    "static/media/save.svg": "/crossword-app/static/media/save.d82c8949.svg",
+    "static/media/trash.svg": "/crossword-app/static/media/trash.665926e2.svg",
+    "static/media/x.svg": "/crossword-app/static/media/x.273fc395.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.8094cf9d.js",
+    "static/js/2.6f716eb9.chunk.js",
+    "static/css/main.2fc20e45.chunk.css",
+    "static/js/main.72c643f9.chunk.js"
+  ]
+}
