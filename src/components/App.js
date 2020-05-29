@@ -4,6 +4,7 @@ import {
     Switch,
     Route
 } from "react-router-dom";
+import {createBrowserHistory} from 'history';
 import styled from 'styled-components';
 import Solve from './solve/Solve';
 import Create from './create/Create';
@@ -20,8 +21,12 @@ const App = () => {
         setSidebarOpen(false);
     }
 
+    const history = createBrowserHistory({
+        basename: process.env.PUBLIC_URL
+    })
+
     return (
-        <Router>
+        <Router history={history}>
             {activePage !== "" &&
                 <Sidebar 
                     open={sidebarOpen}
@@ -31,17 +36,17 @@ const App = () => {
             }
 
             <Switch>
-                <Route exact path={`${process.env.PUBLIC_URL}/`}>
+                <Route exact path="/">
                     <FrontDoor />
                 </Route>
 
-                <Route path={`${process.env.PUBLIC_URL}/solve`}>
+                <Route path="/solve">
                     <Solve 
                         toggleSidebarOpen={toggleSidebarOpen}
                         changeActivePage={changeActivePage} />
                 </Route>
 
-                <Route path={`${process.env.PUBLIC_URL}/create`}>
+                <Route path="/create">
                     <Create 
                         toggleSidebarOpen={toggleSidebarOpen}
                         changeActivePage={changeActivePage} />
