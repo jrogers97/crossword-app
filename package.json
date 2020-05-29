@@ -16,7 +16,7 @@
     "smoothscroll-polyfill": "^0.4.4",
     "styled-components": "^5.1.0"
   },
-  "homepage": "https://jrogers97.github.io/crossword-app/",
+  "homepage": "https://jrogers97.github.io/",
   "scripts": {
     "start": "react-scripts start",
     "predeploy": "npm run build",
