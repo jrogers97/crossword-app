@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/crossword-app/static/css/main.2fc20e45.chunk.css",
-    "main.js": "/crossword-app/static/js/main.ecdb5ca8.chunk.js",
-    "main.js.map": "/crossword-app/static/js/main.ecdb5ca8.chunk.js.map",
+    "main.css": "/crossword-app/static/css/main.3a47c24d.chunk.css",
+    "main.js": "/crossword-app/static/js/main.1fa4cfad.chunk.js",
+    "main.js.map": "/crossword-app/static/js/main.1fa4cfad.chunk.js.map",
     "runtime-main.js": "/crossword-app/static/js/runtime-main.8094cf9d.js",
     "runtime-main.js.map": "/crossword-app/static/js/runtime-main.8094cf9d.js.map",
-    "static/js/2.6f716eb9.chunk.js": "/crossword-app/static/js/2.6f716eb9.chunk.js",
-    "static/js/2.6f716eb9.chunk.js.map": "/crossword-app/static/js/2.6f716eb9.chunk.js.map",
+    "static/js/2.797bef46.chunk.js": "/crossword-app/static/js/2.797bef46.chunk.js",
+    "static/js/2.797bef46.chunk.js.map": "/crossword-app/static/js/2.797bef46.chunk.js.map",
     "index.html": "/crossword-app/index.html",
-    "precache-manifest.7fe4b62dcb913105a4973db7b05d9b30.js": "/crossword-app/precache-manifest.7fe4b62dcb913105a4973db7b05d9b30.js",
+    "precache-manifest.0dac592f778f5d5b855aec483522dda8.js": "/crossword-app/precache-manifest.0dac592f778f5d5b855aec483522dda8.js",
     "service-worker.js": "/crossword-app/service-worker.js",
-    "static/css/main.2fc20e45.chunk.css.map": "/crossword-app/static/css/main.2fc20e45.chunk.css.map",
+    "static/css/main.3a47c24d.chunk.css.map": "/crossword-app/static/css/main.3a47c24d.chunk.css.map",
     "static/media/check.svg": "/crossword-app/static/media/check.0d4e03c5.svg",
     "static/media/chevron.svg": "/crossword-app/static/media/chevron.3fc89807.svg",
     "static/media/download.svg": "/crossword-app/static/media/download.e48ed1de.svg",
@@ -30,8 +30,8 @@
   },
   "entrypoints": [
     "static/js/runtime-main.8094cf9d.js",
-    "static/js/2.6f716eb9.chunk.js",
-    "static/css/main.2fc20e45.chunk.css",
-    "static/js/main.ecdb5ca8.chunk.js"
+    "static/js/2.797bef46.chunk.js",
+    "static/css/main.3a47c24d.chunk.css",
+    "static/js/main.1fa4cfad.chunk.js"
   ]
 }
