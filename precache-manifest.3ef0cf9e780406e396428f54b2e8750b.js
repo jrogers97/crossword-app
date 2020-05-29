@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "0c64b23bc431fbc40eb6c1732216c8cd",
+    "revision": "93b667fc0e4e70446600d95aafc6a918",
     "url": "/crossword-app/index.html"
   },
   {
-    "revision": "2c79b2687252694a5e81",
+    "revision": "07244dee3779ed2553d8",
     "url": "/crossword-app/static/css/main.3a47c24d.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/crossword-app/static/js/2.797bef46.chunk.js"
   },
   {
-    "revision": "2c79b2687252694a5e81",
-    "url": "/crossword-app/static/js/main.1fa4cfad.chunk.js"
+    "revision": "07244dee3779ed2553d8",
+    "url": "/crossword-app/static/js/main.1e9cb564.chunk.js"
   },
   {
     "revision": "5cefb1706b13e8bbaa41",
