@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "8698ff9f762c1775be4454181799e726",
+    "revision": "d3b7f67253321fdbca2adde9fef42564",
     "url": "/crossword-app/index.html"
   },
   {
