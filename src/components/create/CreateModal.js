@@ -79,7 +79,6 @@ const ModalOverlay = styled.div`
 	top: 0;
 	left: 0;
     background-color: rgba(255,255,255,0.5);
-    // visibility: ${props => props.hidden ? "hidden" : "visible"};
 	display: ${props => props.hidden ? "none" : "flex"};
 `;
 
