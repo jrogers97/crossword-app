@@ -28,7 +28,7 @@ const PuzzleHeader = ({date, author}) => {
 				<PuzzleDay> {day} </PuzzleDay>
 				<span> {formattedDate} </span>
 			</div>
-			<PuzzleAuthor> {"by " + author.replace("&amp;", "&")} </PuzzleAuthor>
+			<PuzzleAuthor> {"by " + author.replace("&amp;", "&").replace("&#39;", "'")} </PuzzleAuthor>
 		</StyledPuzzleHeader>
 	);
 }

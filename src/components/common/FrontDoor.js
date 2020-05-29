@@ -32,8 +32,8 @@ const FrontDoor = () => {
 }
 
 const StyledFrontDoor = styled.div`
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -44,8 +44,11 @@ const StyledLink = styled(Link)`
 `;
 
 const CenterRail = styled.div`
-    width: 50%;
+    width: 55%;
+    max-width: 700px;
     min-width: 520px;
+    padding: 30px;
+    margin-top: 20px;
     @media(max-width: 1100px) {
         width: 60%;
     }

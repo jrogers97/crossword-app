@@ -67,6 +67,8 @@ const SmallScreenWarning = styled.div`
     left: 0;
     height: 100vh;
     width: 100vw;
+    min-height: 400px;
+    min-width: 400px;
     background-color: white;
     padding: 20px;
     @media (max-width: 400px) {
