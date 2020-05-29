@@ -56,7 +56,7 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-	position: absolute;
+	position: relative;
 	height: 300px;
 	width: 400px;
 	background-color: white;

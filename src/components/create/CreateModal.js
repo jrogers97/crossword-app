@@ -68,6 +68,7 @@ const CreateModal = ({
 }
 
 const ModalOverlay = styled.div`
+    display: flex;
     align-items: center;
     justify-content: center;
 	position: absolute;
@@ -77,12 +78,13 @@ const ModalOverlay = styled.div`
 	z-index: 1;
 	top: 0;
 	left: 0;
-	background-color: rgba(255,255,255,0.5);
+    background-color: rgba(255,255,255,0.5);
+    // visibility: ${props => props.hidden ? "hidden" : "visible"};
 	display: ${props => props.hidden ? "none" : "flex"};
 `;
 
 const ModalContent = styled.div`
-	position: absolute;
+	position: relative;
 	background-color: white;
 	box-shadow: 0px 2px 4px 0 rgba(0,0,0,0.5);
 	border-radius: 5px;
