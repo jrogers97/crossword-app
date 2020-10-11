@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
     BrowserRouter as Router,
     Switch,
     Route
 } from "react-router-dom";
 import {createBrowserHistory} from 'history';
+import ReactGa from 'react-ga';
 import styled from 'styled-components';
 import Solve from './solve/Solve';
 import Create from './create/Create';
@@ -19,11 +20,19 @@ const App = () => {
     const changeActivePage = (pageName) => {
         setActivePage(pageName);
         setSidebarOpen(false);
-    }
+    };
 
     const history = createBrowserHistory({
         basename: process.env.PUBLIC_URL
-    })
+    });
+
+    useEffect(() => {
+        ReactGa.initialize("UA-180289892-1");
+    }, []);
+
+    useEffect(() => {
+        ReactGa.pageview(`/${activePage}`);
+    }, [activePage]);
 
     return (
         <Router history={history}>
