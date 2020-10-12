@@ -144,7 +144,7 @@ export const getPrevCellState = (
 
 	const newActiveCell = currentCell;
 
-	const stayOnCell = grid[activeCell] !== null && shouldDelete;
+	const stayOnCell = (grid[activeCell] !== null && shouldDelete) || (newActiveCell === 0 && grid[newActiveCell] === false);
 	let newGrid = grid.slice();
 	let filteredIncorrectCells = null;
 
